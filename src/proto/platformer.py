@@ -20,8 +20,19 @@ class MainWidget(BaseWidget):
         self.background = Rectangle(pos=(0,0), size=Window.size)
         self.canvas.add(Color(0, 0.3, 0.6))
         self.canvas.add(self.background)
-        self.camera = Camera()
 
+        self.canvas.add(Color(1, 1, 1))
+        angry_sun = Rectangle(source='../../data/angry_sun.png', pos=(150, 600),
+                              size=(100, 100))
+        self.canvas.add(angry_sun)
+
+        cloud_pos = [(200, 500), (400, 567), (900, 413)]
+        for pos in cloud_pos:
+            cloud = Rectangle(source='../../data/cloud.png', pos=pos,
+                               size=(200, 100))
+            self.canvas.add(cloud)
+
+        self.camera = Camera()
         self.canvas.add(self.camera)
 
         self.anim_group = AnimGroup()
@@ -91,6 +102,7 @@ class CollisionRect(object):
             return self.top_y 
 
         return False
+
 
 class CollisionMesh(object):
     def __init__(self):
