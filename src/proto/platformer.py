@@ -10,8 +10,9 @@ from kivy.graphics import Translate
 
 from controller import *
 from collision import *
-from player import *
 from graphics import *
+from level import *
+from player import *
 
 import pdb
 
@@ -24,10 +25,10 @@ class MainWidget(BaseWidget):
         self.controller = Controller()
         self.collision = CollisionMesh()
 
-        self.background = Background((0, 0.3, 0.6))
+        self.background = parallax()
 
         self.movable_sprites = MovingSprites()
-        self.terrain = self.setup_level()
+        self.terrain = setup_level(self.collision)
         self.foreground = Foreground(self.movable_sprites, self.terrain)
 
         self.camera = Camera(self.foreground, self.background)
@@ -52,6 +53,27 @@ class MainWidget(BaseWidget):
     def on_update(self):
         self.movable_sprites.on_update()
         self.info.text = '\nfps:%d' % kivyClock.get_fps()
+
+def parallax():
+    parallax_background = ParallaxBackground()
+
+    layer1 = ParallaxLayer(0)
+    base = InstructionGroup()
+    base.add(Color(1,1,1))
+    base.add(Sprite(source='../../data/background.png', pos=(0,0), size=Window.size))
+    layer1.add_object(base)
+    
+    trees = InstructionGroup()
+    tree_paths = ['../../data/tree{}.png'.format(i) for i in xrange(1,4)] 
+    for i, path in enumerate(tree_paths):
+        trees.add(Sprite(source=path, pos=(i * 500, -100), size=(500, 500)))
+    layer2 = ParallaxLayer(.2)
+    layer2.add_object(trees)
+
+    parallax_background.add_layer(layer1)
+    parallax_background.add_layer(layer2)
+
+    return parallax_background
 
 run(MainWidget)
 

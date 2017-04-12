@@ -12,6 +12,7 @@ class Camera(InstructionGroup):
     def __init__(self, foreground, background):
         super(Camera, self).__init__()
 
+        self.background = background
         self.add(background)
 
         self.translator = Translate(0, 0)
@@ -29,7 +30,10 @@ class Camera(InstructionGroup):
         self.rev_translator.x += x
         self.rev_translator.y += y
 
+        self.background.move_relative(pos)
+
     def move_absolute(self, pos):
+        #TODO Add support for parallax backgroun to handle absolute moves
         x, y = pos
         self.translator.x = x
         self.translator.y = y
@@ -54,6 +58,42 @@ class Background(InstructionGroup):
 
         self.rectangle = Rectangle(pos=(0,0), size=Window.size)
         self.add(self.rectangle)
+
+class ParallaxBackground(InstructionGroup):
+    def __init__(self):
+        super(ParallaxBackground, self).__init__()
+        self.layers = []
+
+    def move_relative(self, pos):
+        for layer in self.layers:
+            layer.move_relative(pos)
+
+    def add_layer(self, layer):
+        self.layers.append(layer)
+        self.add(layer)
+
+class ParallaxLayer(InstructionGroup):
+    def __init__(self, speed):
+        super(ParallaxLayer, self).__init__()
+        self.speed = speed
+        self.translator = Translate(0, 0)
+        self.add(self.translator)
+
+        self.objects = InstructionGroup()
+        self.add(self.objects)
+
+        self.rev_translator = Translate(0, 0)
+        self.add(self.rev_translator)
+
+    def add_object(self, thing):
+        self.objects.add(thing)
+
+    def move_relative(self, pos):
+        x, y = pos
+        self.translator.x -= x * self.speed
+        self.translator.y -= y * self.speed
+        self.rev_translator.x += x * self.speed
+        self.rev_translator.y += y * self.speed
 
 class MovingSprites(InstructionGroup):
     def __init__(self):
