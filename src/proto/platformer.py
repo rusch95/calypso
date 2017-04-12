@@ -39,7 +39,7 @@ class MainWidget(BaseWidget):
         self.canvas.add(self.anim_group)
 
         self.collision = CollisionMesh()
-        self.player = Player((50, 200), self.camera, self.collision)
+        self.player = Player((300, 200), self.camera, self.collision)
         self.anim_group.add(self.player)
 
         self.setup_level()
@@ -52,6 +52,13 @@ class MainWidget(BaseWidget):
                       ((2200, 150), (200, 30)),
                       ((2500, 200), (200, 30)),
                       ((2800, 250), (200, 30))]
+
+        landscape = [50, 100, 90, 80, 69, 75, 90, 110, 135, 150, 170, 188, 150, 100 , 53, 500]
+        for i, y in enumerate(landscape):
+            left_x = 500 + i * 100
+            size_x = 100
+            rect = ((left_x, 0), (size_x, y+200))
+            rectangles.append(rect)
 
         self.canvas.add(Color(0, 1, 0))
         for pos, size in rectangles:
@@ -93,15 +100,29 @@ class CollisionRect(object):
         self.right_x = right_x
         self.top_y = top_y
 
-    def check_collision(self, old_pos, new_pos):
+    def check_down_collision(self, old_pos, new_pos, size):
         #TODO Support collisions besides top down
         ox, oy = old_pos
         nx, ny = new_pos
+        dx, dy = size
 
-        if self.left_x <= nx <= self.right_x and ny <= self.top_y and oy >= self.top_y:
-            return self.top_y 
+        #Rectanglular collision checking
+        if self.left_x - dx <= nx <= self.right_x:
+            #Simple top collision
+            if  oy >= self.top_y and ny <= self.top_y:
+                return self.top_y 
 
         return False
+
+    def check_side_collision(self, old_pos, new_pos, size):
+        left_x, bot_y = new_pos
+        dx, dy = size
+        right_x, top_y = left_x + dx, bot_y + dy
+
+        if self.left_x - dx < left_x < self.right_x:
+            if self.bottom_y - dy < bot_y < self.top_y:
+                return True
+        return False 
 
 
 class CollisionMesh(object):
@@ -117,12 +138,17 @@ class CollisionMesh(object):
 
         self.collision_rects.append(rect)
 
-    def check_collision(self, old_pos, new_pos):
+    def check_down_collision(self, old_pos, new_pos, size):
         for rect in self.collision_rects:
-            collision = rect.check_collision(old_pos, new_pos) 
+            collision = rect.check_down_collision(old_pos, new_pos, size) 
             if collision:
                 return collision
+        return False
 
+    def check_side_collision(self, old_pos, new_pos, size):
+        for rect in self.collision_rects:
+            if rect.check_side_collision(old_pos, new_pos, size):
+                return True
         return False
 
 class Camera(InstructionGroup):
@@ -149,7 +175,9 @@ class Player(InstructionGroup):
         self.pos = init_pos
         self.y_vel = 0
 
-        self.sprite = Rectangle(pos=init_pos, size=(10, 30))
+        self.size = (50, 50)
+
+        self.sprite = Rectangle(pos=init_pos, size=self.size)
         self.add(Color(1, 0, 0))
         self.add(self.sprite)
 
@@ -157,6 +185,8 @@ class Player(InstructionGroup):
         self.camera = camera
 
         self.can_jump = True
+        self.og_jump_f = 800
+        self.jump_f = self.og_jump_f
 
     def move_absolute(self, pos):
         self.pos = pos
@@ -165,39 +195,50 @@ class Player(InstructionGroup):
         x, y = pos
         old_x, old_y = self.pos
         self.pos = (x + old_x, y + old_y)
-
         self.sprite.pos = self.pos
 
     def jump(self):
         if self.can_jump > 0:
-            self.y_vel = 800
+            self.y_vel = self.jump_f
             self.can_jump -= 1
 
     def on_update(self, dt):
+        terminal_vel = -1000
+
+        x, y = self.pos
+        delta_x = 0
+        delta_y = self.y_vel * dt
+
         alpha = 200
         delta = dt * alpha
-        key_mappings = {'left':   (-delta, 0),
-                        'right':  (delta, 0)}
+        key_mappings = {'left':  -delta,
+                        'right':  delta}
 
         for key, value in key_mappings.items():
             if key in active_keys and active_keys[key]:
-                x, y = value
-                self.camera.move_relative(value)
-                self.move_relative(value)
+                delta_x = value
         
-        y_offset = self.y_vel * dt
-        x, y = self.pos
-        new_pos = x, y + y_offset
-        collision = self.collision.check_collision((x,y), new_pos)
-        if collision:
-            self.can_jump = 2
-            self.y_vel = 0
-            self.move_absolute((x, collision))
-        else:
-            self.move_relative((0, y_offset))
+        new_pos = x + delta_x, y + delta_y
+        down_collision = self.collision.check_down_collision(self.pos, new_pos, self.size)
 
+        if self.collision.check_side_collision(self.pos, new_pos, self.size):
+            self.can_jump = True
+            self.jump_f *= .9
+            terminal_vel = -200
+        else:
+            self.can_jump = False
+            self.camera.move_relative((delta_x, 0))
+            self.move_relative((delta_x, 0))
+        
+        if down_collision:
+            self.can_jump = True
+            self.y_vel = 0
+            self.jump_f = self.og_jump_f
+            self.move_relative((0, down_collision - y))
+        else:
+            self.move_relative((0, delta_y))
             g = -1000
-            self.y_vel = max(self.y_vel + g * dt, -1000)
+            self.y_vel = max(self.y_vel + g * dt, terminal_vel)
 
 
 run(MainWidget)
