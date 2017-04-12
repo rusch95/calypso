@@ -18,7 +18,7 @@ def setup_level(collision):
     #    rect = ((left_x, 0), (size_x, y+200))
     #    rectangles.append(rect)
 
-    terrain.add_block(Color(0, 1, 0))
+    terrain.add_block(Color(0, .2, 0))
     for pos, size in rectangles:
         rect = Rectangle(pos=pos, size=size)
         terrain.add_block(rect)

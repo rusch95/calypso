@@ -2,6 +2,12 @@ from kivy.core.window import Window
 from kivy.graphics.instructions import InstructionGroup
 from kivy.graphics import Color, Ellipse, Rectangle, Line
 from kivy.graphics import Translate
+from kivy.uix.image import Image
+
+class TextureHolder(object):
+    def __init__(self, texture):
+        self.texture = texture
+        self.right = True
 
 class Player(InstructionGroup):
     def __init__(self, init_pos, camera, collision, controller):
@@ -10,10 +16,14 @@ class Player(InstructionGroup):
         self.pos = init_pos
         self.y_vel = 0
 
-        self.size = (50, 50)
+        self.size = (150, 150)
 
-        self.sprite = Rectangle(pos=init_pos, size=self.size)
-        self.add(Color(1, 0, 0))
+        self.frame = 0
+        texture = Image(source='../../data/kramer_sprites.png').texture
+        self.frames = [TextureHolder(texture.get_region(x, 0, 150, 200)) for x in [0, 150, 300, 450]]
+
+        self.sprite = Rectangle(texture=self.frames[0].texture, pos=init_pos, size=self.size)
+        self.add(Color(1, 1, 1))
         self.add(self.sprite)
 
         self.controller = controller
@@ -23,6 +33,8 @@ class Player(InstructionGroup):
         self.can_jump = True
         self.og_jump_f = 800
         self.jump_f = self.og_jump_f
+
+        self.was_left = False
 
     def move_absolute(self, pos):
         self.pos = pos
@@ -39,6 +51,7 @@ class Player(InstructionGroup):
             self.can_jump -= 1
 
     def on_update(self, dt):
+
         terminal_vel = -1000
 
         x, y = self.pos
@@ -53,8 +66,19 @@ class Player(InstructionGroup):
         for key, value in key_mappings.items():
             if key in self.controller.active_keys and self.controller.active_keys[key]:
                 delta_x = value
+
+                #Update sprite
+                self.frame += 1
+                new_frame = self.frames[self.frame / 5 % len(self.frames)]
+                if key == 'left' and new_frame.right == True:
+                    new_frame.right = False
+                    new_frame.texture.flip_horizontal()
+                if key == 'right' and new_frame.right == False:
+                    new_frame.right = True
+                    new_frame.texture.flip_horizontal()
+                self.sprite.texture = new_frame.texture
         
-        new_pos = x + delta_x, y + delta_y
+        new_pos = x + delta_x, y + delta_y 
         down_collision = self.collision.check_down_collision(self.pos, new_pos, self.size)
 
         if self.collision.check_side_collision(self.pos, new_pos, self.size):

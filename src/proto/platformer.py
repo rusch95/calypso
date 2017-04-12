@@ -52,7 +52,7 @@ class MainWidget(BaseWidget):
 
     def on_update(self):
         self.movable_sprites.on_update()
-        self.info.text = '\nfps:%d' % kivyClock.get_fps()
+        self.info.text = 'fps:%d' % kivyClock.get_fps()
 
 def parallax():
     parallax_background = ParallaxBackground()
