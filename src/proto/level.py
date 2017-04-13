@@ -2,6 +2,8 @@ from kivy.graphics import Color, Ellipse, Rectangle, Line
 from graphics import *
 from collision import *
 
+import math
+
 def setup_level(collision):
     terrain = Terrain()
 
@@ -43,14 +45,16 @@ class Collectables(InstructionGroup):
             self.collectable_collision.add(collectable)
 
     def on_update(self, dt):
-        collision = self.collectable_collision.check_collision(self.player.pos, self.player.pos, self.player.size)
-        if collision:
+        collisions = self.collectable_collision.check_collision(self.player.pos, self.player.pos, self.player.size)
+        for collision in collisions:
             self.remove(collision)
             self.collectable_collision.remove(collision)
 
 class BulletStorm(InstructionGroup):
     def __init__(self, player):
         super(BulletStorm, self).__init__()
+
+        self.frame = 0
 
         self.bullet_collision = NewCollisionMesh()
         self.player = player
@@ -62,14 +66,23 @@ class BulletStorm(InstructionGroup):
             self.bullet_collision.add(bullet)
 
     def on_update(self, dt):
-        collision = self.bullet_collision.check_collision(self.player.pos, self.player.pos, self.player.size)
-        if collision:
+        collisions = self.bullet_collision.check_collision(self.player.pos, self.player.pos, self.player.size)
+        for collision in collisions:
             self.bullet_collision.remove(collision)
             self.remove(collision)
 
         for bullet in self.children:
             if isinstance(bullet, Bullet):
                 bullet.on_update(dt)
+
+        self.frame += 1
+        if self.frame % 1 == 0:
+            y = (math.sin(self.frame / 30.) + 1) * 200 + 150
+            bullet = Bullet(pos=(1500, y), size=(20, 20))
+            hue = (self.frame / 100.) % 1
+            self.add(Color(hue, 1, 1, mode='hsv'))
+            self.add(bullet)
+            self.bullet_collision.add(bullet)
         
 def parallax():
     parallax_background = ParallaxBackground()

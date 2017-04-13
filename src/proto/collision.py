@@ -71,12 +71,13 @@ class NewCollisionMesh(object):
         return False
 
     def check_collision(self, old_pos, new_pos, size):
+        collided = []
         for rect in self.collision_rects:
             collision = rect.check_side_collision(old_pos, new_pos, size)
             if collision:
                 collision.on_collision(old_pos, new_pos, size)
-                return collision
-        return None
+                collided.append(collision)
+        return collided
 
 class CollisionMesh(object):
     def __init__(self):
