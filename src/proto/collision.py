@@ -13,7 +13,7 @@ class CollisionRect(object):
         dx, dy = size
 
         #Rectanglular collision checking
-        if self.left_x - dx <= nx <= self.right_x:
+        if self.left_x - dx < nx < self.right_x:
             #Simple top collision
             if  oy >= self.top_y and ny <= self.top_y:
                 return self.top_y 
@@ -27,9 +27,56 @@ class CollisionRect(object):
 
         if self.left_x - dx < left_x < self.right_x:
             if self.bottom_y - dy < bot_y < self.top_y:
-                return True
-        return False 
+                return self
+        return None 
 
+class NewCollisionRect(object):
+    def __init__(self, collision_sprite):
+        self.coll_spr = collision_sprite
+
+    def check_side_collision(self, old_pos, new_pos, size):
+        left_x_1, bot_y_1 = new_pos
+        dx_1, dy_1 = size
+
+        left_x_2, bot_y_2 = self.coll_spr.pos
+        dx_2, dy_2 = self.coll_spr.size
+        right_x_2, top_y_2 = left_x_2 + dx_2, bot_y_2 + dy_2
+
+        if left_x_2 - dx_1 < left_x_1 < right_x_2:
+            if bot_y_2 - dy_1 < bot_y_1 < top_y_2:
+                return self.coll_spr
+        return None 
+
+class NewCollisionMesh(object):
+    def __init__(self):
+        self.collision_rects = []
+
+    def add(self, collision_sprite):
+        rect = NewCollisionRect(collision_sprite)
+        self.collision_rects.append(rect)
+
+    def remove(self, collision_sprite):
+        remove = None
+        for collision_rect in self.collision_rects:
+            if collision_rect.coll_spr == collision_sprite:
+                remove = collision_rect
+        if remove:
+            self.collision_rects.remove(remove)
+
+    def check_down_collision(self, old_pos, new_pos, size):
+        for rect in self.collision_rects:
+            collision = rect.check_down_collision(old_pos, new_pos, size) 
+            if collision:
+                return collision
+        return False
+
+    def check_collision(self, old_pos, new_pos, size):
+        for rect in self.collision_rects:
+            collision = rect.check_side_collision(old_pos, new_pos, size)
+            if collision:
+                collision.on_collision(old_pos, new_pos, size)
+                return collision
+        return None
 
 class CollisionMesh(object):
     def __init__(self):
@@ -53,6 +100,7 @@ class CollisionMesh(object):
 
     def check_side_collision(self, old_pos, new_pos, size):
         for rect in self.collision_rects:
-            if rect.check_side_collision(old_pos, new_pos, size):
-                return True
-        return False
+            collision = rect.check_side_collision(old_pos, new_pos, size)
+            if collision:
+                return collision
+        return None

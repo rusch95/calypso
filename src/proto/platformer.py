@@ -23,19 +23,22 @@ class MainWidget(BaseWidget):
         super(MainWidget, self).__init__()
 
         self.controller = Controller()
-        self.collision = CollisionMesh()
+        self.terrain_collision = CollisionMesh()
 
         self.background = parallax()
 
         self.movable_sprites = MovingSprites()
-        self.terrain = setup_level(self.collision)
+        self.terrain = setup_level(self.terrain_collision)
         self.foreground = Foreground(self.movable_sprites, self.terrain)
 
         self.camera = Camera(self.foreground, self.background)
         self.canvas.add(self.camera)
 
-        self.player = Player((300, 200), self.camera, self.collision, self.controller)
+        self.player = Player((300, 200), self.camera, self.terrain_collision, self.controller)
         self.movable_sprites.add_sprite(self.player)
+
+        self.movable_sprites.add_sprite(Collectables(self.player))
+        self.movable_sprites.add_sprite(BulletStorm(self.player))
 
         self.info = topleft_label()
         self.add_widget(self.info)
@@ -53,27 +56,6 @@ class MainWidget(BaseWidget):
     def on_update(self):
         self.movable_sprites.on_update()
         self.info.text = 'fps:%d' % kivyClock.get_fps()
-
-def parallax():
-    parallax_background = ParallaxBackground()
-
-    layer1 = ParallaxLayer(0)
-    base = InstructionGroup()
-    base.add(Color(1,1,1))
-    base.add(Sprite(source='../../data/background.png', pos=(0,0), size=Window.size))
-    layer1.add_object(base)
-    
-    trees = InstructionGroup()
-    tree_paths = ['../../data/tree{}.png'.format(i) for i in xrange(1,4)] 
-    for i, path in enumerate(tree_paths):
-        trees.add(Sprite(source=path, pos=(i * 500, -100), size=(500, 500)))
-    layer2 = ParallaxLayer(.2)
-    layer2.add_object(trees)
-
-    parallax_background.add_layer(layer1)
-    parallax_background.add_layer(layer2)
-
-    return parallax_background
 
 run(MainWidget)
 

@@ -109,6 +109,39 @@ class MovingSprites(InstructionGroup):
     def on_update(self):
         self.anim_group.on_update()
 
+class CollisionSprite(InstructionGroup):
+    def __init__(self, pos, size):
+        super(CollisionSprite, self).__init__()
+
+        self.sprite = Rectangle(pos=pos, size=size)
+        self.pos = pos
+        self.size = size
+
+        self.add(self.sprite)
+
+    def on_collision(self, old_pos, new_pos, size):
+        print "YUM"
+        print old_pos
+
+class Bullet(InstructionGroup):
+    def __init__(self, pos, size):
+        super(Bullet, self).__init__()
+
+        self.sprite = Rectangle(pos=pos, size=size)
+        self.pos = pos
+        self.size = size
+
+        self.add(self.sprite)
+
+    def on_update(self, dt):
+        x, y = self.pos
+        self.pos = (x-dt*100, y)
+        self.sprite.pos = self.pos
+
+    def on_collision(self, old_pos, new_pos, size):
+        print "BOOM"
+        print old_pos
+
 class Terrain(InstructionGroup):
     def __init__(self):
         super(Terrain, self).__init__()

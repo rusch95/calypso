@@ -16,13 +16,14 @@ class Player(InstructionGroup):
         self.pos = init_pos
         self.y_vel = 0
 
-        self.size = (150, 150)
+        self.texture_size = (150, 150)
+        self.size = (100, 150)
 
         self.frame = 0
         texture = Image(source='../../data/kramer_sprites.png').texture
         self.frames = [TextureHolder(texture.get_region(x, 0, 150, 200)) for x in [0, 150, 300, 450]]
 
-        self.sprite = Rectangle(texture=self.frames[0].texture, pos=init_pos, size=self.size)
+        self.sprite = Rectangle(texture=self.frames[0].texture, pos=init_pos, size=self.texture_size)
         self.add(Color(1, 1, 1))
         self.add(self.sprite)
 
@@ -33,8 +34,6 @@ class Player(InstructionGroup):
         self.can_jump = True
         self.og_jump_f = 800
         self.jump_f = self.og_jump_f
-
-        self.was_left = False
 
     def move_absolute(self, pos):
         self.pos = pos
@@ -51,7 +50,6 @@ class Player(InstructionGroup):
             self.can_jump -= 1
 
     def on_update(self, dt):
-
         terminal_vel = -1000
 
         x, y = self.pos
