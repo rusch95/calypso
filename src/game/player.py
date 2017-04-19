@@ -12,6 +12,7 @@ class Player(InstructionGroup):
 
         # Set the physics of the person
         self.ground = init_pos[1]
+        self.init_pos = init_pos
         self.pos = init_pos
         self.y_vel = 0
         self.can_jump = True
@@ -41,6 +42,11 @@ class Player(InstructionGroup):
         self.color_idx = color_idx
         self.color.rgb = COLORS2[color_idx]
 
+    def reset(self):
+        self.pos = self.init_pos
+        self.y_vel = 0
+        self.color.rgb = COLORS2[0]
+
     def on_update(self, dt):
         # Update position with physics
         self.y_vel += dt*self.gravity
@@ -51,4 +57,4 @@ class Player(InstructionGroup):
         
         # Update person
         self.person.pos = self.pos
-        self.person.size = self.size        
+        self.person.size = self.size

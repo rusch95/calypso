@@ -39,14 +39,43 @@ class MainWidget(BaseWidget):
         if color_idx:
             self.player.set_color(color_idx-1)
 
+        if keycode[1] == 'left':
+            self.level.reverse()
+
+        if keycode[1] == 'right':
+            self.level.forward()
+
+        if keycode[1] == 'r':
+            self.level.reset()
+            self.player.reset()
+
     def on_key_up(self, keycode):
         if keycode[1] == 'down':
             self.player.un_duck()
+
+    def check_color_loss(self):
+        platform_color = self.level.get_current_platform().color.rgb
+        person_color = self.player.color.rgb
+        if platform_color != person_color and not self.level.is_between_platforms():
+            self.level.lose()
+
+    def check_block_loss(self):
+        if self.level.is_current_duck():
+            pos = self.player.pos[1]
+            height = self.player.size[1]
+            if pos + height > 200:
+                self.level.lose()
+        elif self.level.is_current_jump():
+            pos = self.player.pos[1]
+            if pos < 150:
+                self.level.lose()
 
     def on_update(self):
         dt = 1
         self.info.text = 'fps:%d' % kivyClock.get_fps()
         self.player.on_update(dt)
         self.level.on_update(dt)
+        self.check_color_loss()
+        self.check_block_loss()
 
 run(MainWidget)
