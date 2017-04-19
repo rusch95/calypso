@@ -15,13 +15,13 @@ class Player(InstructionGroup):
         self.pos = init_pos
         self.y_vel = 0
         self.can_jump = True
-        self.jump_vel = 50
-        self.gravity = -3
+        self.jump_vel = 20
+        self.gravity = -1
 
         # Create a Person
         self.size = (50,150)
         self.person = Rectangle(pos=self.pos, size=self.size)
-        self.color = RED
+        self.color = Color(1,0,0)
         self.color_idx = 0
         self.add(self.color)
         self.add(self.person)
@@ -39,8 +39,7 @@ class Player(InstructionGroup):
 
     def set_color(self, color_idx):
         self.color_idx = color_idx
-        self.color = COLORS[color_idx]
-        self.add(self.color)
+        self.color.rgb = COLORS2[color_idx]
 
     def on_update(self, dt):
         # Update position with physics
@@ -48,9 +47,8 @@ class Player(InstructionGroup):
         self.pos = (self.pos[0], max(self.ground,self.pos[1]+dt*self.y_vel))
         if self.pos[1] == self.ground:
             self.can_jump = True
-            self.y_vel = 0            
-
-        # Re-Draw Person
-        self.remove(self.person)
-        self.person = Rectangle(pos=self.pos, size=self.size)
-        self.add(self.person)
+            self.y_vel = 0    
+        
+        # Update person
+        self.person.pos = self.pos
+        self.person.size = self.size        
