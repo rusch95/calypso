@@ -10,6 +10,7 @@ from kivy.graphics import Translate
 
 from level import *
 from player import *
+from audio_controller import *
 
 import pdb
 
@@ -24,34 +25,38 @@ class MainWidget(BaseWidget):
 
         self.level = Level('level.txt')
         self.canvas.add(self.level)
+        self.audio_ctrl = AudioController("mountain_king.wav")
 
         self.info = topleft_label()
         self.add_widget(self.info)
       
     def on_key_down(self, keycode, modifiers):
-        if keycode[1] == 'up':
-            self.player.jump()
+        if self.level.alive:
+            if keycode[1] == 'up':
+                self.player.jump()
 
-        if keycode[1] == 'down':
-            self.player.duck()
+            if keycode[1] == 'down':
+                self.player.duck()
 
-        color_idx = lookup(keycode[1], 'asd', (1,2,3))
-        if color_idx:
-            self.player.set_color(color_idx-1)
+            color_idx = lookup(keycode[1], 'asd', (1,2,3))
+            if color_idx:
+                self.player.set_color(color_idx-1)
 
-        if keycode[1] == 'left':
-            self.level.reverse()
+            if keycode[1] == 'left':
+                self.level.reverse()
 
-        if keycode[1] == 'right':
-            self.level.forward()
+            if keycode[1] == 'right':
+                self.level.forward()
 
         if keycode[1] == 'r':
             self.level.reset()
             self.player.reset()
+            self.audio_ctrl.restart()
 
     def on_key_up(self, keycode):
-        if keycode[1] == 'down':
-            self.player.un_duck()
+        if self.level.alive:
+            if keycode[1] == 'down':
+                self.player.un_duck()
 
     def check_color_loss(self):
         platform_color = self.level.get_current_platform().color.rgb
@@ -69,6 +74,7 @@ class MainWidget(BaseWidget):
             pos = self.player.pos[1]
             if pos < 150:
                 self.level.lose()
+                self.audio_ctrl.stop()
 
     def on_update(self):
         dt = 1
@@ -77,5 +83,6 @@ class MainWidget(BaseWidget):
         self.level.on_update(dt)
         self.check_color_loss()
         self.check_block_loss()
+        self.audio_ctrl.on_update()
 
 run(MainWidget)

@@ -26,6 +26,7 @@ class Level(InstructionGroup):
         self.create_platforms(self.platforms)
 
         self.direction = 1
+        self.alive = True
 
     def read_level_data(self, filepath):
         # read text file
@@ -89,10 +90,12 @@ class Level(InstructionGroup):
 
     def lose(self):
         self.direction = 0
+        self.alive = False
 
     def reset(self):
         self.translator.x = 0
         self.direction = 1
+        self.alive = True
 
     def get_current_platform(self):
         for p in self.platform_list:
@@ -104,14 +107,14 @@ class Level(InstructionGroup):
     def is_current_duck(self):
         for b in self.ducks:
             pos = b.get_current_pos()
-            if pos > 100 and pos < 150:
+            if pos > 50 and pos < 150:
                 return True
         return False
 
     def is_current_jump(self):
         for b in self.jumps:
             pos = b.get_current_pos()
-            if pos > 100 and pos < 150:
+            if pos > 50 and pos < 150:
                 return True
         return False
 
