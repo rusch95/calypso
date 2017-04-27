@@ -5,9 +5,7 @@ from kivy.graphics import Translate
 from kivy.uix.image import Image
 
 from colors import *
-
-SPEED = 5
-SPACING = SPEED*60
+from const import *
 
 class Level(InstructionGroup):
     def __init__(self, text_file):
@@ -100,27 +98,27 @@ class Level(InstructionGroup):
     def get_current_platform(self):
         for p in self.platform_list:
             start,end = p.get_current_pos()
-            if 100 >= start and 100 < end:
+            if PLAYERX >= start and PLAYERX < end:
                 return p
         return None
 
     def is_current_duck(self):
         for b in self.ducks:
             pos = b.get_current_pos()
-            if pos > 50 and pos < 150:
+            if pos > PLAYERX-PLAYERW and pos < PLAYERX+DUCKBOXW:
                 return True
         return False
 
     def is_current_jump(self):
         for b in self.jumps:
             pos = b.get_current_pos()
-            if pos > 50 and pos < 150:
+            if pos > PLAYERX-PLAYERW and pos < PLAYERX+JUMPBOXW:
                 return True
         return False
 
     def is_between_platforms(self):
         border = self.get_current_platform().get_current_pos()[1]
-        if border < 150 and border > 100:
+        if border < PLAYERX+PLAYERW and border > PLAYERX:
             return True
         else:
             return False
@@ -138,7 +136,7 @@ class Platform(InstructionGroup):
         self.color = COLORS[color_idx]
         self.add(self.color)
         self.width = final_pos - init_pos
-        self.platform = Rectangle(pos=(init_pos,50), size=(self.width, 50))
+        self.platform = Rectangle(pos=(init_pos,FLOOR-PLATFORMH), size=(self.width, PLATFORMH))
         self.add(self.platform)
 
     def get_current_pos(self):
@@ -155,7 +153,7 @@ class JumpBlock(InstructionGroup):
         self.translator = translator
         self.color = COLORS[color_idx]
         self.add(self.color)
-        self.block = Rectangle(pos=(init_pos,100), size=(50, 50))
+        self.block = Rectangle(pos=(init_pos,JUMPBOXY), size=(JUMPBOXW, JUMPBOXH))
         self.add(self.block)
 
     def get_current_pos(self):
@@ -172,7 +170,7 @@ class DuckBlock(InstructionGroup):
         self.translator = translator
         self.color = COLORS[color_idx]
         self.add(self.color)
-        self.block = Rectangle(pos=(init_pos,200), size=(50, 50))
+        self.block = Rectangle(pos=(init_pos,DUCKBOXY), size=(DUCKBOXW, DUCKBOXH))
         self.add(self.block)
 
     def get_current_pos(self):

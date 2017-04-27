@@ -11,6 +11,7 @@ from kivy.graphics import Translate
 from level import *
 from player import *
 from audio_controller import *
+from const import *
 
 import pdb
 
@@ -20,12 +21,12 @@ class MainWidget(BaseWidget):
     def __init__(self):
         super(MainWidget, self).__init__()
 
-        self.player = Player((100,100))
+        self.player = Player((PLAYERX, PLAYERY))
         self.canvas.add(self.player)
 
         self.level = Level('level.txt')
         self.canvas.add(self.level)
-        self.audio_ctrl = AudioController("mountain_king.wav")
+        # self.audio_ctrl = AudioController("mountain_king.wav")
 
         self.info = topleft_label()
         self.add_widget(self.info)
@@ -51,7 +52,7 @@ class MainWidget(BaseWidget):
         if keycode[1] == 'r':
             self.level.reset()
             self.player.reset()
-            self.audio_ctrl.restart()
+            # self.audio_ctrl.restart()
 
     def on_key_up(self, keycode):
         if self.level.alive:
@@ -59,7 +60,11 @@ class MainWidget(BaseWidget):
                 self.player.un_duck()
 
     def check_color_loss(self):
-        platform_color = self.level.get_current_platform().color.rgb
+        platform = self.level.get_current_platform()
+        if platform == None:
+            self.level.lose()
+            return
+        platform_color = platform.color.rgb
         person_color = self.player.color.rgb
         if platform_color != person_color and not self.level.is_between_platforms():
             self.level.lose()
@@ -68,13 +73,13 @@ class MainWidget(BaseWidget):
         if self.level.is_current_duck():
             pos = self.player.pos[1]
             height = self.player.size[1]
-            if pos + height > 200:
+            if pos + height > DUCKBOXY:
                 self.level.lose()
         elif self.level.is_current_jump():
             pos = self.player.pos[1]
-            if pos < 150:
+            if pos < JUMPBOXY + JUMPBOXH:
                 self.level.lose()
-                self.audio_ctrl.stop()
+                # self.audio_ctrl.stop()
 
     def on_update(self):
         dt = 1
@@ -83,6 +88,6 @@ class MainWidget(BaseWidget):
         self.level.on_update(dt)
         self.check_color_loss()
         self.check_block_loss()
-        self.audio_ctrl.on_update()
+        # self.audio_ctrl.on_update()
 
 run(MainWidget)

@@ -5,6 +5,7 @@ from kivy.graphics import Translate
 from kivy.uix.image import Image
 
 from colors import *
+from const import *
 
 class Player(InstructionGroup):
     def __init__(self, init_pos):
@@ -20,7 +21,7 @@ class Player(InstructionGroup):
         self.gravity = -1
 
         # Create a Person
-        self.size = (50,150)
+        self.size = (PLAYERW,PLAYERH)
         self.person = Rectangle(pos=self.pos, size=self.size)
         self.color = Color(1,0,0)
         self.color_idx = 0
@@ -33,10 +34,10 @@ class Player(InstructionGroup):
             self.can_jump = False
 
     def duck(self):
-        self.size = (50,50)
+        self.size = (PLAYERW,PLAYERDUCKH)
 
     def un_duck(self):
-        self.size = (50,150)
+        self.size = (PLAYERW,PLAYERH)
 
     def set_color(self, color_idx):
         self.color_idx = color_idx
