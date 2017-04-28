@@ -15,7 +15,7 @@ from const import *
 
 import pdb
 
-Window.size = (1024, 768)
+Window.size = WINDOW_SIZE
 
 class MainWidget(BaseWidget):
     def __init__(self):
@@ -39,9 +39,9 @@ class MainWidget(BaseWidget):
             if keycode[1] == 'down':
                 self.player.duck()
 
-            color_idx = lookup(keycode[1], 'asd', (1,2,3))
+            color_idx = lookup(keycode[1], 'asd', (0,1,2))
             if color_idx:
-                self.player.set_color(color_idx-1)
+                self.player.set_color(color_idx)
 
             if keycode[1] == 'left':
                 self.level.reverse()
