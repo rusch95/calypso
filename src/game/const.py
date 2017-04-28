@@ -1,4 +1,13 @@
+from kivy.graphics import Color
 # Constants!
+
+# Colors
+RED = Color(1,0,0)
+GREEN = Color(0,1,0)
+BLUE = Color(0,0,1)
+WHITE = Color(1,1,1)
+COLORS = [RED, GREEN, BLUE, WHITE]
+COLORS2 = [(1,0,0),(0,1,0),(0,0,1)]
 
 FLOOR = 100
 
@@ -19,4 +28,4 @@ DUCKBOXY = FLOOR + 100
 PLATFORMH = 50
 
 SPEED = 5
-SPACING = SPEED*60
+SPACING = SPEED * 60
