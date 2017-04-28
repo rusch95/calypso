@@ -21,15 +21,15 @@ class MainWidget(BaseWidget):
     def __init__(self):
         super(MainWidget, self).__init__()
 
-        self.player = Player((PLAYERX, PLAYERY))
+        self.info = topleft_label()
+        self.add_widget(self.info)
+
+        self.player = Player((PLAYER_X, PLAYER_Y))
         self.canvas.add(self.player)
 
         self.level = Level('level.txt')
         self.canvas.add(self.level)
         # self.audio_ctrl = AudioController("mountain_king.wav")
-
-        self.info = topleft_label()
-        self.add_widget(self.info)
       
     def on_key_down(self, keycode, modifiers):
         if self.level.alive:
@@ -64,6 +64,7 @@ class MainWidget(BaseWidget):
         if platform == None:
             self.level.lose()
             return
+
         platform_color = platform.color.rgb
         person_color = self.player.color.rgb
         if platform_color != person_color and not self.level.is_between_platforms():
@@ -73,11 +74,12 @@ class MainWidget(BaseWidget):
         if self.level.is_current_duck():
             pos = self.player.pos[1]
             height = self.player.size[1]
-            if pos + height > DUCKBOXY:
+            if pos + height > DUCK_BOX_Y:
                 self.level.lose()
+                
         elif self.level.is_current_jump():
             pos = self.player.pos[1]
-            if pos < JUMPBOXY + JUMPBOXH:
+            if pos < JUMP_BOX_Y + JUMP_BOX_H:
                 self.level.lose()
                 # self.audio_ctrl.stop()
 
