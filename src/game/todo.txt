@@ -1,0 +1,6 @@
+todo stuff
+
+What rusch wants -
+Refactor level into level and game
+Tools for allowing manual level creation off of beat lines drawn in sync with the midi file
+More mechanics.
