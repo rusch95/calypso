@@ -11,6 +11,7 @@ from kivy.graphics import Translate
 from level import *
 from player import *
 from audio_controller import *
+from music.midi_controller import *
 from const import *
 
 import pdb
@@ -29,7 +30,6 @@ class MainWidget(BaseWidget):
 
         self.level = Level('level.txt')
         self.canvas.add(self.level)
-        # self.audio_ctrl = AudioController("mountain_king.wav")
       
     def on_key_down(self, keycode, modifiers):
         if self.level.alive:
@@ -52,7 +52,6 @@ class MainWidget(BaseWidget):
         if keycode[1] == 'r':
             self.level.reset()
             self.player.reset()
-            # self.audio_ctrl.restart()
 
     def on_key_up(self, keycode):
         if self.level.alive:
@@ -81,7 +80,6 @@ class MainWidget(BaseWidget):
             pos = self.player.pos[1]
             if pos < JUMP_BOX_Y + JUMP_BOX_H:
                 self.level.lose()
-                # self.audio_ctrl.stop()
 
     def on_update(self):
         dt = 1
@@ -90,6 +88,5 @@ class MainWidget(BaseWidget):
         self.level.on_update(dt)
         self.check_color_loss()
         self.check_block_loss()
-        # self.audio_ctrl.on_update()
 
 run(MainWidget)
