@@ -244,7 +244,7 @@ def reverse_messages(msg_list):
 import mido
 
 class MidiController(object):
-    def __init__(self, song_path):
+    def __init__(self, song_path, level_update):
         super(MidiController, self).__init__()
         self.audio = Audio(2)
         self.mixer = Mixer()
@@ -265,7 +265,9 @@ class MidiController(object):
         self.audio.set_generator(self.mixer)
 
         self.mixer.set_gain(1)
-        
+
+        # save the level
+        self.level_update = level_update
         
         # current index in self.mid_messages
         self.current_idx = 0
@@ -395,6 +397,7 @@ class MidiController(object):
     # needed to update audio
     def on_update(self):
         self.audio.on_update()
+        self.level_update(.5)
 
 
 

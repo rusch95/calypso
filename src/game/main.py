@@ -30,7 +30,7 @@ class MainWidget(BaseWidget):
         self.level = Level('level.txt')
         self.canvas.add(self.level)
 
-        self.audio = MidiController("music/grieg_mountain_king.mid")
+        self.audio = MidiController("music/grieg_mountain_king.mid", self.level.on_update)
       
     def on_key_down(self, keycode, modifiers):
         if self.level.alive:
@@ -44,11 +44,11 @@ class MainWidget(BaseWidget):
             if color_idx:
                 self.player.set_color(color_idx)
 
-            if keycode[1] == 'left':
+            if keycode[1] == 'left' and self.level.direction == 1:
                 self.audio.reverse(self.level.reverse)
 
-            if keycode[1] == 'right':
-                self.level.forward()
+            if keycode[1] == 'right' and self.level.direction == -1:
+                self.audio.reverse(self.level.forward)
 
             if keycode[1] == 'p':
                 self.level.start()
