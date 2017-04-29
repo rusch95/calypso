@@ -408,8 +408,9 @@ class MidiController(object):
         
     # needed to update audio
     def on_update(self):
+        dt = 1
         self.audio.on_update()
-        self.level_update(.5)
+        self.level_update(dt)
 
 
 

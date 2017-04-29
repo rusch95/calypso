@@ -4,3 +4,16 @@ What rusch wants -
 Refactor level into level and game
 Tools for allowing manual level creation off of beat lines drawn in sync with the midi file
 More mechanics.
+
+
+Lotta:
+	fix bug that if you reverse then die, you keep going
+	Create a wall-jumping thing with platforms for the level
+	add barlines
+	
+Jakob:
+	make a level!
+	change tone based on color
+
+Rusch?:
+	Add graphics
