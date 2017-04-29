@@ -23,7 +23,7 @@ class Level(InstructionGroup):
         self.create_jumps(self.jump_times)
         self.create_platforms(self.platforms)
 
-        self.direction = 1
+        self.direction = 0
         self.alive = True
 
     def read_level_data(self, filepath):
@@ -92,8 +92,11 @@ class Level(InstructionGroup):
 
     def reset(self):
         self.translator.x = 0
-        self.direction = 1
+        self.direction = 0
         self.alive = True
+
+    def start(self):
+        self.direction = 1
 
     def get_current_platform(self):
         for p in self.platform_list:

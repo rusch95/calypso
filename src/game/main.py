@@ -50,10 +50,14 @@ class MainWidget(BaseWidget):
             if keycode[1] == 'right':
                 self.level.forward()
 
+            if keycode[1] == 'p':
+                self.level.start()
+                self.audio.start()
+
         if keycode[1] == 'r':
             self.level.reset()
             self.player.reset()
-            self.audio.start()
+            self.audio.reset()
 
     def on_key_up(self, keycode):
         if self.level.alive:
