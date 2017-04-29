@@ -303,9 +303,21 @@ class MidiController(object):
     def start(self):
         next_beat = quantize_tick_up(self.sched.get_tick(), BEAT_LEN)
         
-        self.schedule_cmd = self.sched.post_at_tick(next_beat, self._midi_schedule_next_note,0)
+        self.schedule_cmd = self.sched.post_at_tick(next_beat, self._midi_schedule_next_note,self.num_reverses)
         self.mark_beat_cmd = self.sched.post_at_tick(next_beat, self._mark_beat, 0)
+        
+    
+    def reset(self):
+        if self.schedule_cmd:
+            self.sched.remove(self.schedule_cmd)
+        
+        if self.schedule_action:
+            self.sched.remove(self.schedule_action)
 
+        self.reversed = False
+        self.current_idx = 0
+        self.num_reverses += 10
+    
     # reverse music
     def reverse(self, callback=None):
         """Reverses the music at the next barline. callback will be called when that happens."""
@@ -320,7 +332,7 @@ class MidiController(object):
         next_beat = quantize_tick_up(self.sched.get_tick(), BEAT_LEN)
         self.reverse_cmd = self.sched.post_at_tick(next_beat, self._reverse)
         
-        
+        self.reverse_callback = callback
     
     def _mark_beat(self, tick, arg):
         print "---------------------------------------"
