@@ -398,6 +398,7 @@ class MidiController(object):
 
 
 
-run(MainWidget)
+if __name__ == '__main__':
+    run(MainWidget)
 
 
