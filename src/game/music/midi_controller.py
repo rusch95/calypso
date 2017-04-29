@@ -314,6 +314,9 @@ class MidiController(object):
         if self.schedule_action:
             self.sched.remove(self.schedule_action)
 
+        if self.mark_beat_cmd:
+            self.sched.remove(self.mark_beat_cmd)
+
         self.reversed = False
         self.current_idx = 0
         self.num_reverses += 10
