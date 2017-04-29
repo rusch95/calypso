@@ -10,8 +10,7 @@ from kivy.graphics import Translate
 
 from level import *
 from player import *
-from audio_controller import *
-from music.midi_controller import *
+from music.midi_controller import MidiController
 from const import *
 
 import pdb
@@ -30,6 +29,8 @@ class MainWidget(BaseWidget):
 
         self.level = Level('level.txt')
         self.canvas.add(self.level)
+
+        self.audio = MidiController("music/grieg_mountain_king.mid")
       
     def on_key_down(self, keycode, modifiers):
         if self.level.alive:
@@ -44,7 +45,7 @@ class MainWidget(BaseWidget):
                 self.player.set_color(color_idx)
 
             if keycode[1] == 'left':
-                self.level.reverse()
+                self.audio.reverse(self.level.reverse)
 
             if keycode[1] == 'right':
                 self.level.forward()
@@ -52,6 +53,7 @@ class MainWidget(BaseWidget):
         if keycode[1] == 'r':
             self.level.reset()
             self.player.reset()
+            self.audio.start()
 
     def on_key_up(self, keycode):
         if self.level.alive:
@@ -88,5 +90,6 @@ class MainWidget(BaseWidget):
         self.level.on_update(dt)
         self.check_color_loss()
         self.check_block_loss()
+        self.audio.on_update()
 
 run(MainWidget)

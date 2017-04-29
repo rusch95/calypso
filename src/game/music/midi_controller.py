@@ -249,7 +249,7 @@ class MidiController(object):
         self.audio = Audio(2)
         self.mixer = Mixer()
 
-        self.synth = Synth('The_Nes_Soundfont.sf2')
+        self.synth = Synth('music/The_Nes_Soundfont.sf2')
         
         self.mid = mido.MidiFile(song_path)
         self.mid_messages = list(self.mid)
