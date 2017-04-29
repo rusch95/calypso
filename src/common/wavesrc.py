@@ -10,7 +10,7 @@
 
 import numpy as np
 import wave
-from audio import kSampleRate
+from audio import Audio
 
 # Interface for reading data from a wave file. Does not store this data locally.
 # Simple call to get_frames() to get data in format we like (numpy array, float32)
@@ -22,9 +22,9 @@ class WaveFile(object):
         self.num_channels, self.sampwidth, self.sr, self.end, \
            comptype, compname = self.wave.getparams()
 
-        # for now, we will only accept 16 bit files at 44k
+        # for now, we will only accept 16 bit files and the sample rate must match
         assert(self.sampwidth == 2)
-        assert(self.sr == 44100)
+        assert(self.sr == Audio.sample_rate)
 
     # read an arbitrary chunk of data from the file
     def get_frames(self, start_frame, end_frame) :
@@ -102,9 +102,9 @@ class SongRegions(object):
             # time values are in seconds
             (start_sec, x, len_sec, name) = line.strip().split('\t')
 
-            # convert time (in seconds) to frames. Assumes kSampleRate
-            start_f = int( float(start_sec) * kSampleRate )
-            len_f = int( float(len_sec) * kSampleRate )
+            # convert time (in seconds) to frames. Assumes Audio.sample_rate
+            start_f = int( float(start_sec) * Audio.sample_rate )
+            len_f = int( float(len_sec) * Audio.sample_rate )
 
             self.regions.append(AudioRegion(name, start_f, len_f))
 

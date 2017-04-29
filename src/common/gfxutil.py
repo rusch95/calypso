@@ -110,10 +110,12 @@ class AnimGroup(InstructionGroup) :
 # the 3D point must be in the range [0,1] for all 3 coordinates.
 # depth is rendered as the size of the circle.
 class Cursor3D(InstructionGroup):
-    def __init__(self, area_size, area_pos, rgb, border = True):
+    def __init__(self, area_size, area_pos, rgb, size_range = (10, 50), border = True):
         super(Cursor3D, self).__init__()
         self.area_size = area_size
         self.area_pos = area_pos
+        self.min_sz = size_range[0]
+        self.max_sz = size_range[1]
 
         if border:
             self.add(Color(1, 0, 0))
@@ -128,9 +130,7 @@ class Cursor3D(InstructionGroup):
 
     # position is a 3D point with all values from 0 to 1
     def set_pos(self, pos):
-        min_sz = self.area_size[0] * 0.03
-        max_sz = self.area_size[0] * 0.12
-        radius = min_sz + pos[2] * (max_sz - min_sz)
+        radius = self.min_sz + pos[2] * (self.max_sz - self.min_sz)
         self.cursor.csize = (radius*2, radius*2)
         self.cursor.cpos = pos[0:2] * self.area_size + self.area_pos
 

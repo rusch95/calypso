@@ -9,7 +9,7 @@
 #####################################################################
 
 import numpy as np
-from audio import kSampleRate
+from audio import Audio
 
 # Twelevth root of 2
 kTRT = pow(2.0, 1.0/12.0)
@@ -41,11 +41,11 @@ class NoteGenerator(object):
         continue_flag = True
 
         # check duration / end of this note
-        if end_frame > self.duration * kSampleRate:
+        if end_frame > self.duration * Audio.sample_rate:
             continue_flag = False
 
         frames = np.arange(self.frame, end_frame)          # frame range for this buffer
-        factor = (2.0 * np.pi) * self.freq / kSampleRate   # frequency / time conversion
+        factor = (2.0 * np.pi) * self.freq / Audio.sample_rate   # frequency / time conversion
         env = self.env.generate(num_frames)                # envelope
 
         # final output with gain and envelope
@@ -79,8 +79,8 @@ class Envelope(object):
         super(Envelope, self).__init__()
 
         # attack / decay time parameters (converted from seconds to frames)
-        self.attack_f = round(attack_t * kSampleRate)
-        self.decay_f =  round(decay_t * kSampleRate)
+        self.attack_f = round(attack_t * Audio.sample_rate)
+        self.decay_f =  round(decay_t * Audio.sample_rate)
 
         # attack / decay envelope shapes
         self.n1 = n1

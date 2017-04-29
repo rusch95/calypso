@@ -14,9 +14,10 @@ import core
 import time
 from ConfigParser import ConfigParser
 
-kSampleRate = 44100
-
 class Audio(object):
+    # global variable: might change when Audio driver is set up.
+    sample_rate = 44100
+
     def __init__(self, num_channels, listen_func = None, input_func = None):
         super(Audio, self).__init__()
 
@@ -26,17 +27,16 @@ class Audio(object):
         self.input_func = input_func
         self.audio = pyaudio.PyAudio()
 
-        out_dev, in_dev, buffer_size, sample_rate = self._get_parameters()
+        out_dev, in_dev, buffer_size, sr = self._get_parameters()
 
         # override sample rate if needed...
-        if sample_rate:
-            global kSampleRate
-            kSampleRate = sample_rate
+        if sr:
+            Audio.sample_rate = sr
 
         self.stream = self.audio.open(format = pyaudio.paFloat32,
                                       channels = num_channels,
                                       frames_per_buffer = buffer_size,
-                                      rate = kSampleRate,
+                                      rate = Audio.sample_rate,
                                       output = True,
                                       input = input_func != None,
                                       output_device_index = out_dev,
@@ -65,6 +65,17 @@ class Audio(object):
     def on_update(self):
         t_start = time.time()
 
+        # get input audio if desired
+        if self.input_func:
+            try:
+                num_frames = self.stream.get_read_available() # number of frames to ask for
+                if num_frames:
+                    data_str = self.stream.read(num_frames, False)
+                    data_np = np.fromstring(data_str, dtype=np.float32)
+                    self.input_func(data_np, self.num_channels)
+            except IOError, e:
+                print 'got error', e
+
         # Ask the generator to generate some audio samples.
         num_frames = self.stream.get_write_available() # number of frames to supply
         if self.generator and num_frames != 0:
@@ -77,16 +88,6 @@ class Audio(object):
             if not continue_flag:
                 self.generator = None
 
-        # get input audio if desired
-        if self.input_func:
-            try:
-                num_frames = self.stream.get_read_available() # number of frames to ask for
-                if num_frames:
-                    data_str = self.stream.read(num_frames, False)
-                    data_np = np.fromstring(data_str, dtype=np.float32)
-                    self.input_func(data_np, self.num_channels)
-            except IOError, e:
-                print 'got error', e
 
         dt = time.time() - t_start
         a = 0.9
@@ -106,14 +107,26 @@ class Audio(object):
         try:
             config = ConfigParser()
             config.read(('../common/config.cfg', 'config.cfg'))
-            out_dev = config.getint('audio', 'outputdevice')
-            print 'using config file output device:', out_dev
-            in_dev = config.getint('audio', 'inputdevice')
-            print 'using config file input device:', in_dev
-            buf_size = config.getint('audio', 'buffersize')
-            print 'using config file buffer size:', buf_size
-            sample_rate = config.getint('audio', 'samplerate')
-            print 'using config file buffer size:', sample_rate
+
+            items = config.items('audio')
+
+            for opt in items:
+                if opt[0] == 'outputdevice':
+                    out_dev = int(opt[1])
+                    print 'using config file output device:', out_dev
+
+                elif opt[0] == 'inputdevice':
+                    in_dev = int(opt[1])
+                    print 'using config file input device:', in_dev
+
+                elif opt[0] == 'buffersize':
+                    buf_size = int(opt[1])
+                    print 'using config file buffer size:', buf_size
+
+                elif opt[0] == 'samplerate':
+                    sample_rate = int(opt[1])
+                    print 'using config file samplerate:', sample_rate
+
         except Exception, e:
             pass
 
