@@ -203,3 +203,31 @@ class Barline(InstructionGroup):
 
     def on_update(self, dt):
         pass
+
+class VMovingBlock(InstructionGroup):
+    def __init__(self, init_pos, translator, init_y=FLOOR, speed=V_M_BOX_SPEED):
+        self.init_pos = init_pos
+        self.y = init_y
+        self.translator = translator
+        self.color = WHITE
+        self.add(self.color)
+        self.box = Rectangle(pos=(init_pos,y), size=(V_M_BOX_W, V_M_BOX_H))
+        self.add(self.box)
+
+        self.up = True
+        self.speed = speed
+
+    def get_current_pos(self):
+        return self.init_pos + self.translator.x
+
+    def on_update(self, dt):
+        # update direction
+        if self.y > V_M_BOX_Y_MAX:
+            self.up = False
+        if self.y < V_M_BOX_Y_MIN:
+            self.up = True
+        # update y
+        if self.up:
+            self.y += self.speed
+        else:
+            self.y -= self.speed
