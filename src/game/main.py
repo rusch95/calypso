@@ -36,25 +36,24 @@ class MainWidget(BaseWidget):
         self.audio = MidiController("music/grieg_mountain_king.mid", self.level.on_update)
       
     def on_key_down(self, keycode, modifiers):
-        if self.level.alive:
-            if keycode[1] == 'up':
-                self.up()
+        if keycode[1] == 'up':
+            self.up()
 
-            if keycode[1] == 'down':
-                self.down()
+        if keycode[1] == 'down':
+            self.down()
 
-            color = lookup(keycode[1], 'asd', (RED_IDX, GREEN_IDX, BLUE_IDX))
-            if color:
-                self.set_color(color)
+        color = lookup(keycode[1], 'asd', (RED_IDX, GREEN_IDX, BLUE_IDX))
+        if color:
+            self.set_color(color)
 
-            if keycode[1] == 'left':
-                self.left()
+        if keycode[1] == 'left':
+            self.left()
 
-            if keycode[1] == 'right':
-                self.right()
+        if keycode[1] == 'right':
+            self.right()
 
-            if keycode[1] == 'p':
-                self.start()
+        if keycode[1] == 'p':
+            self.start()
 
         if keycode[1] == 'r':
             self.reset()
@@ -102,26 +101,29 @@ class MainWidget(BaseWidget):
             self.left()
 
     def up(self):
-        self.player.jump()
+        if self.level.alive:
+            self.player.jump()
 
     def down(self):
-        self.player.duck()
+        if self.level.alive:
+            self.player.duck()
 
     def neutral(self):
         if self.level.alive:
             self.player.un_duck()
 
     def left(self):
-        if self.level.direction == 1:
+        if self.level.alive and self.level.direction == 1:
             self.audio.reverse(self.level.reverse)
 
     def right(self):
-        if self.level.direction == -1:
+        if self.level.alive and self.level.direction == -1:
             self.audio.reverse(self.level.forward)
 
     def start(self):
-        self.level.start()
-        self.audio.start()
+        if self.level.alive:
+            self.level.start()
+            self.audio.start()
 
     def reset(self):
         self.player.un_duck()
@@ -130,7 +132,8 @@ class MainWidget(BaseWidget):
         self.audio.reset()
 
     def set_color(self, color_idx):
-        self.player.set_color(color_idx)
+        if self.level.alive:
+            self.player.set_color(color_idx)
 
     def check_color_loss(self):
         platform = self.level.get_current_platform()
