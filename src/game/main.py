@@ -30,6 +30,7 @@ class MainWidget(BaseWidget):
         self.level = Level('level.txt')
         self.canvas.add(self.level)
 
+        Window.bind(on_joy_axis=self.on_joy_axis)
         Window.bind(on_joy_button_down=self.on_joy_button_down)
         Window.bind(on_joy_hat=self.on_joy_hat)
         self.audio = MidiController("music/grieg_mountain_king.mid", self.level.on_update)
@@ -37,55 +38,99 @@ class MainWidget(BaseWidget):
     def on_key_down(self, keycode, modifiers):
         if self.level.alive:
             if keycode[1] == 'up':
-                self.player.jump()
+                self.up()
 
             if keycode[1] == 'down':
-                self.player.duck()
+                self.down()
 
-            color_idx = lookup(keycode[1], 'asd', (0,1,2))
-            if color_idx:
-                self.player.set_color(color_idx)
+            color = lookup(keycode[1], 'asd', (RED_IDX, GREEN_IDX, BLUE_IDX))
+            if color:
+                self.set_color(color)
 
-            if keycode[1] == 'left' and self.level.direction == 1:
-                self.audio.reverse(self.level.reverse)
+            if keycode[1] == 'left':
+                self.left()
 
-            if keycode[1] == 'right' and self.level.direction == -1:
-                self.audio.reverse(self.level.forward)
+            if keycode[1] == 'right':
+                self.right()
 
             if keycode[1] == 'p':
-                self.level.start()
-                self.audio.start()
+                self.start()
 
         if keycode[1] == 'r':
-            self.level.reset()
-            self.player.reset()
-            self.audio.reset()
+            self.reset()
 
     def on_key_up(self, keycode):
         if self.level.alive:
             if keycode[1] == 'down':
-                self.player.un_duck()
+                self.neutral()
+
+    def on_joy_button_down(self, window, null, button):
+        if button == START:
+            self.start()
+
+        if button == SELECT:
+            self.reset()
+
+        mapping = {0: GREEN_IDX, 1: RED_IDX, 2: BLUE_IDX}
+        if button in mapping:
+            color = mapping[button]
+            self.set_color(color)
+
+    def on_joy_axis(self, win, stickid, axisid, value):
+        if axisid == X_AXIS and value < -JOYSTICK_THRESH:
+            self.left()
+        if axisid == X_AXIS and value > JOYSTICK_THRESH:
+            self.right()
+        if axisid == Y_AXIS and value < -JOYSTICK_THRESH:
+            self.up()
+        if axisid == Y_AXIS and value > JOYSTICK_THRESH:
+            self.down()
+        if axisid == Y_AXIS and -JOYSTICK_THRESH < value < JOYSTICK_THRESH:
+            self.neutral()
 
     def on_joy_hat(self, window, null1,  null2, coords):
         x, y = coords
         if y == 1:
-            self.player.jump()
+            self.up()
         if y == -1:
-            self.player.duck()
+            self.down()
         if coords == (0, 0):
-            if self.level.alive:
-                self.player.un_duck()
-        if x == 1 and self.level.direction == -1:
-            self.audio.reverse(self.level.forward)
-        if x == -1 and self.level.direction == 1:
+            self.neutral()
+        if x == 1:
+            self.right()
+        if x == -1:
+            self.left()
+
+    def up(self):
+        self.player.jump()
+
+    def down(self):
+        self.player.duck()
+
+    def neutral(self):
+        if self.level.alive:
+            self.player.un_duck()
+
+    def left(self):
+        if self.level.direction == 1:
             self.audio.reverse(self.level.reverse)
 
-    def on_joy_button_down(self, window, null, button):
-        print null, button
-        mapping = {0: 1, 1: 0, 2: 2}
-        if button in mapping:
-            color_idx = mapping[button]
-            self.player.set_color(color_idx)
+    def right(self):
+        if self.level.direction == -1:
+            self.audio.reverse(self.level.forward)
+
+    def start(self):
+        self.level.start()
+        self.audio.start()
+
+    def reset(self):
+        self.player.un_duck()
+        self.level.reset()
+        self.player.reset()
+        self.audio.reset()
+
+    def set_color(self, color_idx):
+        self.player.set_color(color_idx)
 
     def check_color_loss(self):
         platform = self.level.get_current_platform()
