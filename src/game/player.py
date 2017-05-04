@@ -47,6 +47,9 @@ class Player(InstructionGroup):
         self.y_vel = 0
         self.color.rgb = COLORS_2[0]
 
+    def on_ground(self):
+        return self.pos[1] == FLOOR
+
     def on_update(self, dt):
         # Update position with physics
         self.y_vel += dt*self.gravity

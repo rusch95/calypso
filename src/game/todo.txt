@@ -7,8 +7,8 @@ More mechanics.
 
 
 Lotta:
-	fix bug that if you reverse then die, you keep going
-	fix bug to make color only matter on the ground
+	DONE fix bug that if you reverse then die, you keep going
+	DONE fix bug to make color only matter on the ground
 	# Create a wall-jumping thing with platforms for the level
 	Create obstacles that maybe move up and down to dodge by going back and forth
 	add barlines
@@ -20,3 +20,4 @@ Jakob:
 
 Rusch?:
 	Add graphics
+	Add controller support
