@@ -10,18 +10,30 @@ Lotta:
 	DONE fix bug that if you reverse then die, you keep going
 	DONE fix bug to make color only matter on the ground
 	DONE fix bug about crashing into duck blocks
-	# Create a wall-jumping thing with platforms for the level
 	Create obstacles that maybe move up and down to dodge by going back and forth
 	add barlines
+	Platforms at different heights:
+		fall through platforms that aren't your color
+		stand on ones that are
+	Colored Walls
+		go through when different color, lose when same color
+	Change everything to be 50x50
+	Checkpoints
+		graphics
+		logic
 	
 Jakob:
-	change tone based on color
+	PUNT change tone based on color
 	make music stop when you die
 	make MIDI into levels
 	make a level!
+	checkpoint music logic
 
 Rusch?:
 	Add graphics
-		player graphics that keeps time (through pulsing or spinning or somethin)
+		player graphics that keeps time
+			unicycle with a tick that rotates
+			hunching every tick
 		graphics for all the level elements
+		death animation: everything turns black and white
 	DONE Add controller support

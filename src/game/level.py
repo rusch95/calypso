@@ -26,6 +26,9 @@ class Level(InstructionGroup):
         # self.bar = Barline(500, self.translator)
         # self.add(self.bar)
 
+        #self.move = VMovingBlock(500, self.translator)
+        #self.add(self.move)
+
         self.direction = 0
         self.alive = True
 
@@ -211,7 +214,7 @@ class VMovingBlock(InstructionGroup):
         self.translator = translator
         self.color = WHITE
         self.add(self.color)
-        self.box = Rectangle(pos=(init_pos,y), size=(V_M_BOX_W, V_M_BOX_H))
+        self.box = Rectangle(pos=(init_pos,self.y), size=(V_M_BOX_W, V_M_BOX_H))
         self.add(self.box)
 
         self.up = True
