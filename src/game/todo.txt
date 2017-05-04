@@ -15,10 +15,13 @@ Lotta:
 	add barlines
 	
 Jakob:
-	make a level!
 	change tone based on color
 	make music stop when you die
+	make MIDI into levels
+	make a level!
 
 Rusch?:
 	Add graphics
-	Add controller support
+		player graphics that keeps time (through pulsing or spinning or somethin)
+		graphics for all the level elements
+	DONE Add controller support

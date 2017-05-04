@@ -23,8 +23,8 @@ class Level(InstructionGroup):
         self.create_jumps(self.jump_times)
         self.create_platforms(self.platforms)
 
-        #self.bar = Barline(500, self.translator)
-        #self.add(self.bar)
+        # self.bar = Barline(500, self.translator)
+        # self.add(self.bar)
 
         self.direction = 0
         self.alive = True
@@ -195,7 +195,7 @@ class Barline(InstructionGroup):
         self.translator = translator
         self.color = GREY
         self.add(self.color)
-        self.bar = Rectangle(pos=(init_pos,FLOOR), size=(PLAYER_W, BAR_H))
+        self.bar = Rectangle(pos=(init_pos,BAR_Y), size=(BAR_W, BAR_H))
         self.add(self.bar)
 
     def get_current_pos(self):
