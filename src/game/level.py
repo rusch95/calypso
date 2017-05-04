@@ -18,16 +18,16 @@ class Level(InstructionGroup):
         self.duck_times = None
         self.platforms = None
 
+        self.bar = Barline(500, self.translator)
+        self.add(self.bar)
+
+        self.move = VMovingBlock(1000, self.translator)
+        self.add(self.move)
+
         self.read_level_data(text_file)
         self.create_ducks(self.duck_times)
         self.create_jumps(self.jump_times)
         self.create_platforms(self.platforms)
-
-        # self.bar = Barline(500, self.translator)
-        # self.add(self.bar)
-
-        #self.move = VMovingBlock(500, self.translator)
-        #self.add(self.move)
 
         self.direction = 0
         self.alive = True
@@ -136,6 +136,7 @@ class Level(InstructionGroup):
 
     def on_update(self, dt):
         self.translator.x -= self.direction * SPEED
+        self.move.on_update(1)
 
 
 class Platform(InstructionGroup):
@@ -194,6 +195,7 @@ class DuckBlock(InstructionGroup):
 
 class Barline(InstructionGroup):
     def __init__(self, init_pos, translator):
+        super(Barline, self).__init__()
         self.init_pos = init_pos
         self.translator = translator
         self.color = GREY
@@ -209,6 +211,7 @@ class Barline(InstructionGroup):
 
 class VMovingBlock(InstructionGroup):
     def __init__(self, init_pos, translator, init_y=FLOOR, speed=V_M_BOX_SPEED):
+        super(VMovingBlock, self).__init__()
         self.init_pos = init_pos
         self.y = init_y
         self.translator = translator
@@ -234,3 +237,6 @@ class VMovingBlock(InstructionGroup):
             self.y += self.speed
         else:
             self.y -= self.speed
+        self.remove(self.box)
+        self.box = Rectangle(pos=(self.init_pos,self.y), size=(V_M_BOX_W, V_M_BOX_H))
+        self.add(self.box)
