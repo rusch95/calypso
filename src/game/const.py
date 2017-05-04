@@ -6,12 +6,16 @@ RED = Color(1,0,0)
 GREEN = Color(0,1,0)
 BLUE = Color(0,0,1)
 WHITE = Color(1,1,1)
+GREY = Color(.5,.5,.5)
+GRAY = GREY
 COLORS = [RED, GREEN, BLUE, WHITE]
 COLORS_2 = [(1,0,0),(0,1,0),(0,0,1)]
 
 WINDOW_SIZE = (1024, 768)
 
 FLOOR = 100
+
+BAR_H = WINDOW_SIZE[1]-FLOOR
 
 PLAYER_X = 300
 PLAYER_Y = FLOOR

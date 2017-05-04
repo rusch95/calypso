@@ -50,13 +50,14 @@ class Player(InstructionGroup):
     def on_ground(self):
         return self.pos[1] == FLOOR
 
-    def on_update(self, dt):
+    def on_update(self, dt, alive):
         # Update position with physics
-        self.y_vel += dt*self.gravity
-        self.pos = (self.pos[0], max(self.ground, self.pos[1] + dt * self.y_vel))
+        if alive:
+            self.y_vel += dt*self.gravity
+            self.pos = (self.pos[0], max(self.ground, self.pos[1] + dt * self.y_vel))
         if self.pos[1] == self.ground:
             self.can_jump = True
-            self.y_vel = 0    
+            self.y_vel = 0
         
         # Update person
         self.person.pos = self.pos

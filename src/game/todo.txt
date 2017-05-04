@@ -9,6 +9,7 @@ More mechanics.
 Lotta:
 	DONE fix bug that if you reverse then die, you keep going
 	DONE fix bug to make color only matter on the ground
+	DONE fix bug about crashing into duck blocks
 	# Create a wall-jumping thing with platforms for the level
 	Create obstacles that maybe move up and down to dodge by going back and forth
 	add barlines

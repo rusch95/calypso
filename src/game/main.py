@@ -102,7 +102,7 @@ class MainWidget(BaseWidget):
         if self.level.is_current_duck():
             pos = self.player.pos[1]
             height = self.player.size[1]
-            if pos + height > DUCK_BOX_Y:
+            if (pos + height > DUCK_BOX_Y and pos < DUCK_BOX_Y) or (pos < DUCK_BOX_Y+DUCK_BOX_H and pos > DUCK_BOX_Y):
                 self.level.lose()
                 
         elif self.level.is_current_jump():
@@ -113,7 +113,7 @@ class MainWidget(BaseWidget):
     def on_update(self):
         dt = 1
         self.info.text = 'fps:%d' % kivyClock.get_fps()
-        self.player.on_update(dt)
+        self.player.on_update(dt, self.level.alive)
         self.level.on_update(dt)
         self.check_color_loss()
         self.check_block_loss()
