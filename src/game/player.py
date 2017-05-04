@@ -6,6 +6,10 @@ from kivy.uix.image import Image
 
 from const import *
 
+PLAYER_TEXTURES = [Image(source='../../data/dat_boi_red.png').texture,
+                   Image(source='../../data/dat_boi_green.png').texture,
+                   Image(source='../../data/dat_boi_blue.png').texture]
+
 class Player(InstructionGroup):
     def __init__(self, init_pos):
         super(Player, self).__init__()
@@ -21,11 +25,11 @@ class Player(InstructionGroup):
 
         # Create a Person
         self.size = (PLAYER_W, PLAYER_H)
-        self.person = Rectangle(pos=self.pos, size=self.size)
-        self.color = Color(1,0,0)
         self.color_idx = 0
-        self.add(self.color)
+        self.person = Rectangle(texture=PLAYER_TEXTURES[self.color_idx], pos=self.pos, size=self.size)
+        self.add(WHITE)
         self.add(self.person)
+        self.dir_right = False
 
     def jump(self):
         if self.can_jump:
@@ -38,14 +42,29 @@ class Player(InstructionGroup):
     def un_duck(self):
         self.size = (PLAYER_W, PLAYER_H)
 
+    def right(self):
+        new_frame = self.person.texture
+        if self.dir_right == True:
+            self.dir_right = False
+            new_frame.flip_horizontal()
+        self.person.texture = new_frame
+
+    def left(self):
+        new_frame = self.person.texture
+        if self.dir_right == False:
+            self.dir_right = True
+            new_frame.flip_horizontal()
+        self.person.texture = new_frame
+
     def set_color(self, color_idx):
         self.color_idx = color_idx
-        self.color.rgb = COLORS_2[color_idx]
+        self.person.texture = PLAYER_TEXTURES[color_idx]
 
     def reset(self):
         self.pos = self.init_pos
         self.y_vel = 0
-        self.color.rgb = COLORS_2[0]
+        self.color_idx = 0
+        self.texture = PLAYER_TEXTURES[self.color_idx]
 
     def on_ground(self):
         return self.pos[1] == FLOOR
