@@ -43,9 +43,9 @@ class MainWidget(BaseWidget):
             if keycode[1] == 'down':
                 self.down()
 
-            color = lookup(keycode[1], 'asd', (RED_IDX, GREEN_IDX, BLUE_IDX))
-            if color:
-                self.set_color(color)
+            color_idx = lookup(keycode[1], 'asd', (RED_IDX, GREEN_IDX, BLUE_IDX))
+            if color_idx or color_idx == 0:
+                self.set_color(color_idx)
 
             if keycode[1] == 'left':
                 self.left()
