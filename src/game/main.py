@@ -95,7 +95,7 @@ class MainWidget(BaseWidget):
 
         platform_color = platform.color.rgb
         person_color = self.player.color.rgb
-        if platform_color != person_color and not self.level.is_between_platforms():
+        if platform_color != person_color and not self.level.is_between_platforms() and self.player.on_ground():
             self.level.lose()
 
     def check_block_loss(self):

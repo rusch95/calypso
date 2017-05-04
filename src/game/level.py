@@ -81,10 +81,12 @@ class Level(InstructionGroup):
             self.add(duck)
 
     def reverse(self):
-        self.direction = -1
+        if self.alive:
+            self.direction = -1
 
     def forward(self):
-        self.direction = 1
+        if self.alive:
+            self.direction = 1
 
     def lose(self):
         self.direction = 0
