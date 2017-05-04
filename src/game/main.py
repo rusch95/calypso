@@ -30,6 +30,8 @@ class MainWidget(BaseWidget):
         self.level = Level('level.txt')
         self.canvas.add(self.level)
 
+        Window.bind(on_joy_button_down=self.on_joy_button_down)
+        Window.bind(on_joy_hat=self.on_joy_hat)
         self.audio = MidiController("music/grieg_mountain_king.mid", self.level.on_update)
       
     def on_key_down(self, keycode, modifiers):
@@ -63,6 +65,27 @@ class MainWidget(BaseWidget):
         if self.level.alive:
             if keycode[1] == 'down':
                 self.player.un_duck()
+
+    def on_joy_hat(self, window, null1,  null2, coords):
+        x, y = coords
+        if y == 1:
+            self.player.jump()
+        if y == -1:
+            self.player.duck()
+        if coords == (0, 0):
+            if self.level.alive:
+                self.player.un_duck()
+        if x == 1 and self.level.direction == -1:
+            self.audio.reverse(self.level.forward)
+        if x == -1 and self.level.direction == 1:
+            self.audio.reverse(self.level.reverse)
+
+    def on_joy_button_down(self, window, null, button):
+        print null, button
+        mapping = {0: 1, 1: 0, 2: 2}
+        if button in mapping:
+            color_idx = mapping[button]
+            self.player.set_color(color_idx)
 
     def check_color_loss(self):
         platform = self.level.get_current_platform()
