@@ -20,31 +20,31 @@ class Level(InstructionGroup):
         # self.platforms = None
         self.blocks = []
         for i in xrange(50):
-            xr = 50*i
-            xg = 50*i+2500
-            xb = 50*i+1000
-            xl = 1000*i+1000
-            xh = 1000*i+1500
+            xr = PIXEL*i
+            xg = PIXEL*i+PIXEL*50
+            xb = PIXEL*i+PIXEL*16
+            xl = PIXEL*16*i+PIXEL*16
+            xh = PIXEL*16*i+PIXEL*24
             # platforms
-            self.block = Block(xr, 50, RED_IDX, self.translator)
+            self.block = Block(xr, PIXEL, RED_IDX, self.translator)
             self.add(self.block)
             self.blocks.append(self.block)
-            self.block = Block(xg, 50, GREEN_IDX, self.translator)
+            self.block = Block(xg, PIXEL, GREEN_IDX, self.translator)
             self.add(self.block)
             self.blocks.append(self.block)
-            self.block = Block(xb, 150, BLUE_IDX, self.translator)
+            self.block = Block(xb, 3*PIXEL, BLUE_IDX, self.translator)
             self.add(self.block)
             self.blocks.append(self.block)
 
             # dodge blocks
-            self.block = Block(xl, 100, WHITE_IDX, self.translator)
+            self.block = Block(xl, 2*PIXEL, WHITE_IDX, self.translator)
             self.add(self.block)
             self.blocks.append(self.block)
-            self.block = Block(xh, 200, WHITE_IDX, self.translator)
+            self.block = Block(xh, 4*PIXEL, WHITE_IDX, self.translator)
             self.add(self.block)
             self.blocks.append(self.block)
 
-        self.block = Block(750, 200, WHITE_IDX, self.translator, moving=True)
+        self.block = Block(17*PIXEL, 4*PIXEL, WHITE_IDX, self.translator, moving=True)
         self.add(self.block)
         self.blocks.append(self.block)
 
@@ -81,4 +81,5 @@ class Level(InstructionGroup):
 
     def on_update(self, dt):
         self.translator.x -= self.direction * SPEED
-        self.block.on_update()
+        if self.alive:
+            self.block.on_update()

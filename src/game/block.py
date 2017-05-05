@@ -12,6 +12,7 @@ class Block(InstructionGroup):
 
         # Store parameters
         self.init_pos = init_pos
+        self.init_y = y
         self.y = y
         self.width = width
         self.height = height
@@ -55,6 +56,12 @@ class Block(InstructionGroup):
             return ground
         return 0
 
+    def reset(self):
+        if self.moving:
+            self.remove(self.block)
+            self.block = Rectangle(pos=(self.init_pos,self.init_y), size=(self.width, self.height))
+            self.add(self.block)
+
     def on_update(self):
         if self.moving:
             # update direction
@@ -69,5 +76,5 @@ class Block(InstructionGroup):
                 self.y -= self.speed
             # redraw block
             self.remove(self.block)
-            self.block = Rectangle(pos=(self.init_pos,self.y), size=(V_M_BOX_W, V_M_BOX_H))
+            self.block = Rectangle(pos=(self.init_pos,self.y), size=(self.width, self.height))
             self.add(self.block)

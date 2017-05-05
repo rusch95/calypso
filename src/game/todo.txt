@@ -21,6 +21,7 @@ Lotta:
 	Checkpoints
 		graphics
 		logic
+	Change standard sizes to 64
 	
 Jakob:
 	PUNT change tone based on color

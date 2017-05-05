@@ -139,7 +139,11 @@ class MainWidget(BaseWidget):
             self.player.set_color(color_idx)
 
     # checks for loss conditions and returns ground level if player is on ground, otherwise
-    def check_block_collision(self):
+    def check_block_collision_and_death(self):
+        # did you fall off?
+        if self.player.pos[1] < 0:
+            self.level.lose()
+
         current_blocks = self.level.get_current_blocks()
         # fall if no blocks
         if not current_blocks:
@@ -160,7 +164,7 @@ class MainWidget(BaseWidget):
     def on_update(self):
         dt = 1
         self.info.text = 'fps:%d' % kivyClock.get_fps()
-        ground = self.check_block_collision()
+        ground = self.check_block_collision_and_death()
         self.player.on_update(dt, self.level.alive, ground)
         self.level.on_update(dt)
         self.audio.on_update()
