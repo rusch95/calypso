@@ -10,6 +10,11 @@ PLAYER_TEXTURES = [Image(source='../../data/dat_boi_red.png').texture,
                    Image(source='../../data/dat_boi_green.png').texture,
                    Image(source='../../data/dat_boi_blue.png').texture]
 
+class TextureHolder(object):
+    def __init__(self, texture):
+        self.texture = texture
+        self.right = True
+
 class Player(InstructionGroup):
     def __init__(self, init_pos):
         super(Player, self).__init__()
@@ -26,10 +31,18 @@ class Player(InstructionGroup):
         # Create a Person
         self.size = (PLAYER_W, PLAYER_H)
         self.color_idx = 0
-        self.person = Rectangle(texture=PLAYER_TEXTURES[self.color_idx], pos=self.pos, size=self.size)
+        self.frame = 0
+        red = Image(source='../../data/player_red.png').texture
+        red_frames = [TextureHolder(red.get_region(64 * x, 0, 64, 128)) for x in xrange(8)]
+        green = Image(source='../../data/player_green.png').texture
+        green_frames = [TextureHolder(green.get_region(64 * x, 0, 64, 128)) for x in xrange(8)]
+        blue = Image(source='../../data/player_blue.png').texture
+        blue_frames = [TextureHolder(blue.get_region(64 * x, 0, 64, 128)) for x in xrange(8)]
+        self.all_frames = [red_frames, green_frames, blue_frames]
+        self.person = Rectangle(texture=red_frames[0].texture, pos=self.pos, size=self.size)
         self.add(WHITE)
         self.add(self.person)
-        self.dir_right = False
+        self.dir_right = True
 
     def jump(self):
         if self.can_jump:
@@ -44,31 +57,34 @@ class Player(InstructionGroup):
         self.size = (PLAYER_W, PLAYER_H)
 
     def right(self):
-        new_frame = self.person.texture
-        if self.dir_right == True:
-            self.dir_right = False
-            new_frame.flip_horizontal()
-        self.person.texture = new_frame
+        self.dir_right = True
 
     def left(self):
-        new_frame = self.person.texture
-        if self.dir_right == False:
-            self.dir_right = True
-            new_frame.flip_horizontal()
-        self.person.texture = new_frame
+        self.dir_right = False
 
     def set_color(self, color_idx):
         self.color_idx = color_idx
-        self.person.texture = PLAYER_TEXTURES[color_idx]
 
     def reset(self):
+        self.dir_right = True
         self.pos = self.init_pos
         self.y_vel = 0
-        self.texture = PLAYER_TEXTURES[self.color_idx]
         self.color_idx = RED_IDX
 
     def on_ground(self):
         return self.pos[1] == FLOOR
+
+    def next_frame(self):
+        self.frame += 1
+        frames = self.all_frames[self.color_idx]
+        new_frame = frames[self.frame / 5 % len(frames)]
+        print self.dir_right, new_frame.right
+        if self.dir_right != new_frame.right:
+            print "flip"
+            new_frame.right = self.dir_right
+            new_frame.texture.flip_horizontal()
+
+        self.person.texture = new_frame.texture
 
     def on_update(self, dt, alive, ground):
         # Update position with physics
@@ -82,6 +98,8 @@ class Player(InstructionGroup):
             self.can_jump = True
             self.y_vel = 0
         
+        self.next_frame()
+
         # Update person
         self.person.pos = self.pos
         self.person.size = self.size

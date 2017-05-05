@@ -116,10 +116,12 @@ class MainWidget(BaseWidget):
     def left(self):
         if self.level.alive and self.level.direction == 1:
             self.audio.reverse(self.level.reverse)
+            self.player.left()
 
     def right(self):
         if self.level.alive and self.level.direction == -1:
             self.audio.reverse(self.level.forward)
+            self.player.right()
 
     def start(self):
         if self.level.alive:

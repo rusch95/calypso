@@ -31,8 +31,8 @@ FLOOR = 100
 # Player Dimensions
 PLAYER_X = 300
 PLAYER_Y = 500
-PLAYER_W = 50
-PLAYER_H = 150
+PLAYER_W = 64
+PLAYER_H = 128
 PLAYER_DUCK_H = 100
 
 # Block Dimensions
