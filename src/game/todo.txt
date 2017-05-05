@@ -12,12 +12,12 @@ Lotta:
 	DONE fix bug about crashing into duck blocks
 	Create obstacles that maybe move up and down to dodge by going back and forth
 	add barlines
-	Platforms at different heights:
-		fall through platforms that aren't your color
-		stand on ones that are
-	Colored Walls
-		go through when different color, lose when same color
-	Change everything to be 50x50
+	DONE Platforms at different heights:
+		DONE fall through platforms that aren't your color
+		DONE stand on ones that are
+	DONE Colored Walls
+		DONE go through when different color, lose when same color
+	DONE Change everything to be 50x50
 	Checkpoints
 		graphics
 		logic

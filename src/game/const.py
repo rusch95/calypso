@@ -14,6 +14,7 @@ COLORS_2 = [(1,0,0),(0,1,0),(0,0,1)]
 RED_IDX = 0
 GREEN_IDX = 1
 BLUE_IDX = 2
+WHITE_IDX = 3
 
 WINDOW_SIZE = (1024, 768)
 
@@ -29,7 +30,7 @@ FLOOR = 100
 
 # Player Dimensions
 PLAYER_X = 300
-PLAYER_Y = FLOOR
+PLAYER_Y = 500
 PLAYER_W = 50
 PLAYER_H = 150
 PLAYER_DUCK_H = 100
@@ -37,6 +38,11 @@ PLAYER_DUCK_H = 100
 # Block Dimensions
 BLOCK_W = 50
 BLOCK_H = 50
+BLOCK_SPEED = 1
+
+# Moving Block Heights
+BLOCK_MIN = 100
+BLOCK_MAX = 600
 
 # Soon Obsolete Constants
 JUMP_BOX_W = 50

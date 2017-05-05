@@ -12,6 +12,7 @@ from level import *
 from player import *
 from music.midi_controller import MidiController
 from const import *
+from block import *
 
 import pdb
 
@@ -135,36 +136,31 @@ class MainWidget(BaseWidget):
         if self.level.alive:
             self.player.set_color(color_idx)
 
-    def check_color_loss(self):
-        platform = self.level.get_current_platform()
-        if platform == None:
-            self.level.lose()
-            return
-
-        platform_color = platform.color.rgb
-        person_color = self.player.color.rgb
-        if platform_color != person_color and not self.level.is_between_platforms() and self.player.on_ground():
-            self.level.lose()
-
-    def check_block_loss(self):
-        if self.level.is_current_duck():
-            pos = self.player.pos[1]
-            height = self.player.size[1]
-            if (pos + height > DUCK_BOX_Y and pos < DUCK_BOX_Y) or (pos < DUCK_BOX_Y+DUCK_BOX_H and pos > DUCK_BOX_Y):
+    # checks for loss conditions and returns ground level if player is on ground, otherwise
+    def check_block_collision(self):
+        current_blocks = self.level.get_current_blocks()
+        # fall if no blocks
+        if not current_blocks:
+            return 0
+        
+        for b in current_blocks:
+            ground = b.on_ground(self.player)
+            # check if on the ground and return ground level if so
+            if ground:
+                return ground
+            # check if a collision has occured
+            possible_loss = b.check_game_loss(self.player)
+            if possible_loss:
                 self.level.lose()
-                
-        elif self.level.is_current_jump():
-            pos = self.player.pos[1]
-            if pos < JUMP_BOX_Y + JUMP_BOX_H:
-                self.level.lose()
+
+        return 0
 
     def on_update(self):
         dt = 1
         self.info.text = 'fps:%d' % kivyClock.get_fps()
-        self.player.on_update(dt, self.level.alive)
+        ground = self.check_block_collision()
+        self.player.on_update(dt, self.level.alive, ground)
         self.level.on_update(dt)
-        self.check_color_loss()
-        self.check_block_loss()
         self.audio.on_update()
 
 run(MainWidget)
