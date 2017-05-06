@@ -25,6 +25,9 @@ class MainWidget(BaseWidget):
         self.info = topleft_label()
         self.add_widget(self.info)
 
+        self.canvas.add(Color(.4, .4, .75))
+        self.canvas.add(Rectangle(pos=(0,0),size=Window.size))
+
         self.player = Player((PLAYER_X, PLAYER_Y))
         self.canvas.add(self.player)
 

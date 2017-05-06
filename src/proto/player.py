@@ -21,6 +21,7 @@ class Player(InstructionGroup):
 
         self.frame = 0
         texture = Image(source='../../data/kramer_sprites.png').texture
+        #texture.mag_filter = 'nearest'
         self.frames = [TextureHolder(texture.get_region(x, 0, 150, 200)) for x in [0, 150, 300, 450]]
 
         self.sprite = Rectangle(texture=self.frames[0].texture, pos=init_pos, size=self.texture_size)

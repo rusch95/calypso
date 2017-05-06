@@ -6,10 +6,6 @@ from kivy.uix.image import Image
 
 from const import *
 
-PLAYER_TEXTURES = [Image(source='../../data/dat_boi_red.png').texture,
-                   Image(source='../../data/dat_boi_green.png').texture,
-                   Image(source='../../data/dat_boi_blue.png').texture]
-
 class TextureHolder(object):
     def __init__(self, texture):
         self.texture = texture
@@ -32,13 +28,24 @@ class Player(InstructionGroup):
         self.size = (PLAYER_W, PLAYER_H)
         self.color_idx = 0
         self.frame = 0
+
         red = Image(source='../../data/player_red.png').texture
-        red_frames = [TextureHolder(red.get_region(64 * x, 0, 64, 128)) for x in xrange(8)]
         green = Image(source='../../data/player_green.png').texture
-        green_frames = [TextureHolder(green.get_region(64 * x, 0, 64, 128)) for x in xrange(8)]
         blue = Image(source='../../data/player_blue.png').texture
+        red_duck = Image(source='../../data/player_duck_red.png').texture
+        green_duck = Image(source='../../data/player_duck_green.png').texture
+        blue_duck = Image(source='../../data/player_duck_blue.png').texture
+        red_frames = [TextureHolder(red.get_region(64 * x, 0, 64, 128)) for x in xrange(8)]
+        green_frames = [TextureHolder(green.get_region(64 * x, 0, 64, 128)) for x in xrange(8)]
         blue_frames = [TextureHolder(blue.get_region(64 * x, 0, 64, 128)) for x in xrange(8)]
-        self.all_frames = [red_frames, green_frames, blue_frames]
+        red_duck_frames = [TextureHolder(red_duck.get_region(64 * x, 0, 64, 128)) for x in xrange(8)]
+        green_duck_frames = [TextureHolder(green_duck.get_region(64 * x, 0, 64, 128)) for x in xrange(8)]
+        blue_duck_frames = [TextureHolder(blue_duck.get_region(64 * x, 0, 64, 128)) for x in xrange(8)]
+
+        self.normal_frames = [red_frames, green_frames, blue_frames]
+        self.duck_frames = [red_duck_frames, green_duck_frames, blue_duck_frames]
+        self.cur_frames = self.normal_frames
+
         self.person = Rectangle(texture=red_frames[0].texture, pos=self.pos, size=self.size)
         self.add(WHITE)
         self.add(self.person)
@@ -51,9 +58,11 @@ class Player(InstructionGroup):
             self.jumped = True
 
     def duck(self):
+        self.cur_frames = self.duck_frames
         self.size = (PLAYER_W, PLAYER_DUCK_H)
 
     def un_duck(self):
+        self.cur_frames = self.normal_frames
         self.size = (PLAYER_W, PLAYER_H)
 
     def right(self):
@@ -76,11 +85,9 @@ class Player(InstructionGroup):
 
     def next_frame(self):
         self.frame += 1
-        frames = self.all_frames[self.color_idx]
+        frames = self.cur_frames[self.color_idx]
         new_frame = frames[self.frame / 5 % len(frames)]
-        print self.dir_right, new_frame.right
         if self.dir_right != new_frame.right:
-            print "flip"
             new_frame.right = self.dir_right
             new_frame.texture.flip_horizontal()
 

@@ -7,7 +7,10 @@ from kivy.uix.image import Image
 from const import *
 
 class Block(InstructionGroup):
-    def __init__(self, init_pos, y, color_idx, translator, width=BLOCK_W, height=BLOCK_H, moving=False, miny=BLOCK_MIN, maxy=BLOCK_MAX, speed=BLOCK_SPEED):
+    def __init__(self, init_pos, y, color_idx, 
+                 translator, width=BLOCK_W, height=BLOCK_H, 
+                 moving=False, miny=BLOCK_MIN, maxy=BLOCK_MAX, 
+                 speed=BLOCK_SPEED, texture=None):
         super(Block, self).__init__()
 
         # Store parameters
@@ -27,10 +30,11 @@ class Block(InstructionGroup):
             self.speed = speed
             self.up = True
 
+        texture = Image(source='../../data/grayscale_girder.png').texture
 
         # Create block
         self.add(self.color)
-        self.block = Rectangle(pos=(init_pos, self.y), size=(width, height))
+        self.block = Rectangle(pos=(init_pos, self.y), size=(width, height), texture=texture)
         self.add(self.block)
 
     def get_current_pos(self):

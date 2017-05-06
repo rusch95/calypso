@@ -4,7 +4,7 @@ from kivy.graphics import Color
 # Colors
 RED = Color(1,0,0)
 GREEN = Color(0,1,0)
-BLUE = Color(0,0,1)
+BLUE = Color(0,.4,1)
 WHITE = Color(1,1,1)
 GREY = Color(.5,.5,.5)
 GRAY = GREY
@@ -36,7 +36,7 @@ PIXEL = 64
 PLAYER_X = 6*PIXEL
 PLAYER_Y = 2*PIXEL
 PLAYER_W = PIXEL
-PLAYER_H = 3*PIXEL
+PLAYER_H = 2*PIXEL
 PLAYER_DUCK_H = 2*PIXEL
 
 # Block Dimensions
