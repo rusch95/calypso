@@ -25,7 +25,7 @@ Lotta:
 	
 Jakob:
 	PUNT change tone based on color
-	make music stop when you die
+	DONE music stop when you die
 	make MIDI into levels
 	make a level!
 	checkpoint music logic

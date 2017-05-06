@@ -1,4 +1,4 @@
-#pset7.py
+ #pset7.py
 
 
 import sys
@@ -286,7 +286,11 @@ class MidiController(object):
         # thing to call when reversing
         self.reverse_callback = None
         
+        # this keeps track of the number of reverses we've done so that when we flip we don't keep playing notes from the old path.
         self.num_reverses = 0
+        
+        # this keeps track of all the notes currently playing so we can stop them if we get reset.
+        self.playing_notes = set([])
 
     def toggle(self):
         """pauses or plays the music."""
@@ -300,11 +304,15 @@ class MidiController(object):
             # TODO: resume playing the paused notes
             # TODO: reschedule all scheduled notes
     
-    def start(self):
+        
+    def start(self, start_callback=None):
         next_beat = quantize_tick_up(self.sched.get_tick(), BEAT_LEN)
         
         self.schedule_cmd = self.sched.post_at_tick(next_beat, self._midi_schedule_next_note,self.num_reverses)
         self.mark_beat_cmd = self.sched.post_at_tick(next_beat, self._mark_beat, 0)
+        def callback(*args):
+            if start_callback is not None:
+                start_callback()
         
     
     def reset(self):
@@ -317,8 +325,15 @@ class MidiController(object):
         if self.mark_beat_cmd:
             self.sched.remove(self.mark_beat_cmd)
 
+        for channel,note in self.playing_notes:
+            self.synth.noteoff(channel, note)
+        self.playing_notes = set()
+            
+
         self.reversed = False
         self.current_idx = 0
+        
+        # so we don't keep playing scheduled notes
         self.num_reverses += 10
     
     # reverse music
@@ -358,9 +373,9 @@ class MidiController(object):
         
         # start with the same index as we last executed.
         if self.reversed:
-            self.current_idx -= 1
+            self.current_idx -= 2
         else:
-            self.current_idx += 1
+            self.current_idx += 2
 
         # call the first action in the opposite direction
         print "REVERSE"
@@ -397,11 +412,16 @@ class MidiController(object):
         
         if message.type == 'note_on':
             self.synth.noteon(message.channel, message.note, message.velocity)
+            self.playing_notes.add((message.channel,message.note))
             print '%snote on: %d' % ((message.note-20)*' ',message.note)
         elif message.type == 'control_change':
             self.synth.cc(message.channel, message.control, message.value)
         elif message.type == 'note_off':
             self.synth.noteoff(message.channel, message.note)
+            try:
+                self.playing_notes.remove((message.channel,message.note))
+            except KeyError:
+                pass
             print "%snote off: %d" % ((message.note-20)*' ',message.note)
         elif message.type == 'program_change':
             print message

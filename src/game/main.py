@@ -118,13 +118,17 @@ class MainWidget(BaseWidget):
 
     def left(self):
         if self.level.alive and self.level.direction == 1:
-            self.audio.reverse(self.level.reverse)
-            self.player.left()
+            def complete_reverse():
+                self.level.reverse()
+                self.player.left()
+            self.audio.reverse(complete_reverse)
 
     def right(self):
         if self.level.alive and self.level.direction == -1:
-            self.audio.reverse(self.level.forward)
-            self.player.right()
+            def complete_reverse():
+                self.level.forward()
+                self.player.right()
+            self.audio.reverse(complete_reverse)
 
     def start(self):
         if self.level.alive:
@@ -141,11 +145,17 @@ class MainWidget(BaseWidget):
         if self.level.alive:
             self.player.set_color(color_idx)
 
+
+    def lose(self):
+        # pass
+        self.level.lose()
+        self.audio.reset()
+
     # checks for loss conditions and returns ground level if player is on ground, otherwise
     def check_block_collision_and_death(self):
         # did you fall off?
         if self.player.pos[1] < 0:
-            self.level.lose()
+            self.lose()
 
         current_blocks = self.level.get_current_blocks()
         # fall if no blocks
@@ -160,7 +170,7 @@ class MainWidget(BaseWidget):
             # check if a collision has occured
             possible_loss = b.check_game_loss(self.player)
             if possible_loss:
-                self.level.lose()
+                self.lose()
 
         return 0
 
