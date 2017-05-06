@@ -1,12 +1,5 @@
-from kivy.core.window import Window
-from kivy.graphics.instructions import InstructionGroup
-from kivy.graphics import Color, Ellipse, Rectangle, Line
-from kivy.graphics import Translate
-from kivy.uix.image import Image
-
-from const import *
-from block import *
 from barline import *
+from block import *
 from checkpoint import *
 
 
