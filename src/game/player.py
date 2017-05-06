@@ -38,9 +38,9 @@ class Player(InstructionGroup):
         red_frames = [TextureHolder(red.get_region(64 * x, 0, 64, 128)) for x in xrange(8)]
         green_frames = [TextureHolder(green.get_region(64 * x, 0, 64, 128)) for x in xrange(8)]
         blue_frames = [TextureHolder(blue.get_region(64 * x, 0, 64, 128)) for x in xrange(8)]
-        red_duck_frames = [TextureHolder(red_duck.get_region(64 * x, 0, 64, 128)) for x in xrange(8)]
-        green_duck_frames = [TextureHolder(green_duck.get_region(64 * x, 0, 64, 128)) for x in xrange(8)]
-        blue_duck_frames = [TextureHolder(blue_duck.get_region(64 * x, 0, 64, 128)) for x in xrange(8)]
+        red_duck_frames = [TextureHolder(red_duck.get_region(64 * x, 0, 64, 102)) for x in xrange(8)]
+        green_duck_frames = [TextureHolder(green_duck.get_region(64 * x, 0, 64, 102)) for x in xrange(8)]
+        blue_duck_frames = [TextureHolder(blue_duck.get_region(64 * x, 0, 64, 102)) for x in xrange(8)]
 
         self.normal_frames = [red_frames, green_frames, blue_frames]
         self.duck_frames = [red_duck_frames, green_duck_frames, blue_duck_frames]
