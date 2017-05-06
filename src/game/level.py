@@ -6,6 +6,8 @@ from kivy.uix.image import Image
 
 from const import *
 from block import *
+from barline import *
+from checkpoint import *
 
 
 class Level(InstructionGroup):
@@ -20,11 +22,16 @@ class Level(InstructionGroup):
         # self.platforms = None
         self.blocks = []
         for i in xrange(50):
+            xbar = PIXEL*i*5
             xr = PIXEL*i
             xg = PIXEL*i+PIXEL*50
             xb = PIXEL*i+PIXEL*16
             xl = PIXEL*16*i+PIXEL*16
             xh = PIXEL*16*i+PIXEL*24
+            # barlines
+            self.bar = Barline(xbar, self.translator)
+            self.add(self.bar)
+
             # platforms
             self.block = Block(xr, PIXEL, RED_IDX, self.translator)
             self.add(self.block)

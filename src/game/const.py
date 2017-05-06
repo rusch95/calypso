@@ -48,6 +48,11 @@ BLOCK_SPEED = 1
 BLOCK_MIN = 2*PIXEL
 BLOCK_MAX = 10*PIXEL
 
+# Barline Paremeters:
+BAR_W = 10
+BAR_H = WINDOW_SIZE[1]
+BAR_OFFSET = PIXEL/2-BAR_W
+
 # Speed of level
 SPEED = 4
 

@@ -10,8 +10,8 @@ Lotta:
 	DONE fix bug that if you reverse then die, you keep going
 	DONE fix bug to make color only matter on the ground
 	DONE fix bug about crashing into duck blocks
-	Create obstacles that maybe move up and down to dodge by going back and forth
-	add barlines
+	DONE Create obstacles that maybe move up and down to dodge by going back and forth
+	DONE add barlines
 	DONE Platforms at different heights:
 		DONE fall through platforms that aren't your color
 		DONE stand on ones that are
@@ -21,7 +21,7 @@ Lotta:
 	Checkpoints
 		graphics
 		logic
-	Change standard sizes to 64
+	DONE Change standard sizes to 64
 	
 Jakob:
 	PUNT change tone based on color
