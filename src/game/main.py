@@ -137,8 +137,8 @@ class MainWidget(BaseWidget):
 
     def reset(self):
         self.player.un_duck()
-        self.level.reset()
-        self.player.reset()
+        y_pos,color_idx,y_vel = self.level.reset()
+        self.player.reset(y_pos,color_idx,y_vel)
         self.audio.reset()
 
     def set_color(self, color_idx):
@@ -179,6 +179,7 @@ class MainWidget(BaseWidget):
         self.info.text = 'fps:%d' % kivyClock.get_fps()
         ground = self.check_block_collision_and_death()
         self.player.on_update(dt, self.level.alive, ground)
+        self.level.check_checkpoint(self.player.pos[1], self.player.color_idx, self.player.y_vel)
         self.level.on_update(dt)
         self.audio.on_update()
 

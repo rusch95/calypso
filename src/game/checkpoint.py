@@ -14,7 +14,7 @@ class CheckPoint(InstructionGroup):
         self.init_pos = init_pos
         self.x = init_pos + BAR_OFFSET
         self.translator = translator
-        self.color = GREY
+        self.color = LIGHT_PURPLE
         
         # Create bar
         self.add(self.color)
@@ -23,6 +23,20 @@ class CheckPoint(InstructionGroup):
 
     def get_current_pos(self):
         return self.init_pos + self.translator.x
+
+    def set_checkpoint(self):
+        self.color = PURPLE
+        self.add(self.color)
+        self.remove(self.block)
+        self.block = Rectangle(pos=(self.x, 0), size=(BAR_W, BAR_H))
+        self.add(self.block)
+
+    def unset_checkpoint(self):
+        self.color = LIGHT_PURPLE
+        self.add(self.color)
+        self.remove(self.block)
+        self.block = Rectangle(pos=(self.x, 0), size=(BAR_W, BAR_H))
+        self.add(self.block)
 
     def on_update(self):
         pass

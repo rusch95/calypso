@@ -8,6 +8,8 @@ BLUE = Color(0,.4,1)
 WHITE = Color(1,1,1)
 GREY = Color(.5,.5,.5)
 GRAY = GREY
+LIGHT_PURPLE = Color(1,.75,1)
+PURPLE = Color(.5,0,.5)
 COLORS = [RED, GREEN, BLUE, WHITE]
 COLORS_2 = [(1,0,0),(0,1,0),(0,0,1)]
 

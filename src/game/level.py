@@ -14,8 +14,10 @@ class Level(InstructionGroup):
         # self.duck_times = None
         # self.platforms = None
         self.blocks = []
+        self.checkpoints = []
         for i in xrange(50):
             xbar = PIXEL*i*5
+            xcheck = PIXEL*i*25+PIXEL*3
             xr = PIXEL*i
             xg = PIXEL*i+PIXEL*50
             xb = PIXEL*i+PIXEL*16
@@ -24,6 +26,10 @@ class Level(InstructionGroup):
             # barlines
             self.bar = Barline(xbar, self.translator)
             self.add(self.bar)
+
+            self.checkpoint = CheckPoint(xcheck, self.translator)
+            self.add(self.checkpoint)
+            self.checkpoints.append(self.checkpoint)
 
             # platforms
             self.block = Block(xr, PIXEL, RED_IDX, self.translator)
@@ -50,6 +56,11 @@ class Level(InstructionGroup):
 
         self.direction = 0
         self.alive = True
+        self.checkpoint_pos = 0
+        self.checkpoint_y = PIXEL*2
+        self.checkpoint_color = RED_IDX
+        self.checkpoint_y_vel = 0
+        self.checkpoint = self.checkpoints[0]
 
     def get_current_blocks(self):
         current_blocks = []
@@ -58,6 +69,19 @@ class Level(InstructionGroup):
             if b_pos+b.width >= PLAYER_X and b_pos <= PLAYER_X+PLAYER_W:
                 current_blocks.append(b)
         return current_blocks
+
+    def check_checkpoint(self, player_y, color_idx, y_vel):
+        for c in self.checkpoints:
+            c_pos = c.get_current_pos()
+            if c_pos+BAR_W >= PLAYER_X and c_pos <= PLAYER_X+PLAYER_W and c != self.checkpoint:
+                self.checkpoint_pos = self.translator.x
+                self.checkpoint_y = player_y
+                self.checkpoint_color = color_idx
+                self.checkpoint_y_vel = y_vel
+                self.checkpoint.unset_checkpoint()
+                self.checkpoint = c
+                self.checkpoint.set_checkpoint()
+                self.checkpoint_dir = self.direction
 
     def reverse(self):
         if self.alive:
@@ -72,9 +96,10 @@ class Level(InstructionGroup):
         self.alive = False
 
     def reset(self):
-        self.translator.x = 0
+        self.translator.x = self.checkpoint_pos
         self.direction = 0
         self.alive = True
+        return self.checkpoint_y,self.checkpoint_color,self.checkpoint_y_vel
 
     def start(self):
         self.direction = 1

@@ -74,11 +74,11 @@ class Player(InstructionGroup):
     def set_color(self, color_idx):
         self.color_idx = color_idx
 
-    def reset(self):
+    def reset(self, y_pos, color_idx, y_vel):
         self.dir_right = True
-        self.pos = self.init_pos
-        self.y_vel = 0
-        self.color_idx = RED_IDX
+        self.pos = (self.init_pos[0], y_pos)
+        self.y_vel = y_vel
+        self.color_idx = color_idx
 
     def on_ground(self):
         return self.pos[1] == FLOOR
