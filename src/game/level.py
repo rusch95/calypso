@@ -13,6 +13,8 @@ class Level(InstructionGroup):
 
         self.translator = Translate()
         self.add(self.translator)
+        self.checkpoints = []
+        self.blocks = []
 
         where_started = {}
         for msg in platform_messages:
@@ -29,8 +31,7 @@ class Level(InstructionGroup):
 
 
 
-                self.checkpoints = []
-                self.blocks = []
+                
 
                 if msg.pitch == CHECKPOINT_PITCH:
                     cp = CheckPoint(end, self.translator)
