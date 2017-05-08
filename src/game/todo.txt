@@ -26,9 +26,12 @@ Lotta:
 Jakob:
 	PUNT change tone based on color
 	DONE music stop when you die
-	make MIDI into levels
+	DONE make MIDI into levels
+	line up level with song
 	make a level!
-	checkpoint music logic
+	PUNT UNTIL FINAL checkpoint music logic
+	PUNT UNTIL FINAL make reversing into the back of the level not error out
+
 
 Rusch?:
 	Add graphics

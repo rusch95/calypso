@@ -5,7 +5,7 @@ from checkpoint import *
 
 
 def convert_tick_to_x(tick):
-    return tick*16/15
+    return tick*4/15 + PLAYER_X
 
 class Level(InstructionGroup):
     def __init__(self, platform_messages):
@@ -13,6 +13,14 @@ class Level(InstructionGroup):
 
         self.translator = Translate()
         self.add(self.translator)
+
+        self.checkpoints = []
+        self.blocks = []
+
+        for i in xrange(0,PLAYER_X+1,PIXEL):
+            start_block = Block(init_pos=i,y=PIXEL,color_idx=RED_IDX, translator=self.translator)
+            self.add(start_block)
+            self.blocks.append(start_block)
 
         where_started = {}
         for msg in platform_messages:
@@ -22,24 +30,17 @@ class Level(InstructionGroup):
                 begin = convert_tick_to_x(where_started[msg.pitch])
                 end = convert_tick_to_x(msg.tick)
 
-
-
                 CHECKPOINT_PITCH = 0
                 COLORS_MIDI = [None, RED_IDX, GREEN_IDX, BLUE_IDX, WHITE_IDX, None]
-
-
-
-                self.checkpoints = []
-                self.blocks = []
 
                 if msg.pitch == CHECKPOINT_PITCH:
                     cp = CheckPoint(end, self.translator)
                     self.add(cp)
                     self.checkpoints.add(cp)
                 elif msg.pitch >= 12:
-                    # print msg,begin*1./PIXEL, end*1./PIXEL, color_idx, height
+                    print msg,begin*1./PIXEL, end*1./PIXEL
                     block_len = (end-begin) / 64
-                    height = msg.pitch / 6 - 2
+                    height = msg.pitch / 6 - 1
 
                     color_idx = msg.pitch % 6
                     color = COLORS_MIDI[color_idx]
@@ -49,10 +50,13 @@ class Level(InstructionGroup):
                         self.blocks.append(block)
                         self.add(block)
 
+        self.checkpoint = CheckPoint(0, self.translator)
+        self.add(self.checkpoint)
+        self.checkpoints.append(self.checkpoint)
 
         # self.jump_times = No
         for i in xrange(50):
-            xbar = 360*i + 210
+            xbar = 384*i
             xcheck = PIXEL*i*25+PIXEL*3
             xr = PIXEL*i
             xg = PIXEL*i+PIXEL*50
@@ -63,9 +67,9 @@ class Level(InstructionGroup):
             self.bar = Barline(xbar, self.translator)
             self.add(self.bar)
 
-            self.checkpoint = CheckPoint(xcheck, self.translator)
-            self.add(self.checkpoint)
-            self.checkpoints.append(self.checkpoint)
+            # self.checkpoint = CheckPoint(xcheck, self.translator)
+            # self.add(self.checkpoint)
+            # self.checkpoints.append(self.checkpoint)
 
             ### platforms
             # self.block = Block(xr, PIXEL, RED_IDX, self.translator)
@@ -104,7 +108,7 @@ class Level(InstructionGroup):
         current_blocks = []
         for b in self.blocks:
             b_pos = b.get_current_pos()
-            if b_pos+b.width >= PLAYER_X and b_pos <= PLAYER_X+PLAYER_W:
+            if b_pos+b.width >= PLAYER_X and b_pos <= PLAYER_X + PLAYER_W:
                 current_blocks.append(b)
         return current_blocks
 

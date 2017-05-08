@@ -20,8 +20,8 @@ class Player(InstructionGroup):
         self.pos = init_pos
         self.y_vel = 0
         self.can_jump = True
-        self.jump_vel = 20
-        self.gravity = -1
+        self.jump_vel = 15
+        self.gravity = -.5
         self.jumped = False
 
         # Create a Person

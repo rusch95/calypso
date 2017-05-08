@@ -39,6 +39,8 @@ class MainWidget(BaseWidget):
         Window.bind(on_joy_button_down=self.on_joy_button_down)
         Window.bind(on_joy_hat=self.on_joy_hat)
 
+        self.time = 0
+
     def level_on_update(self, *args, **kwargs):
         return self.level.on_update(*args, **kwargs)
 
@@ -150,9 +152,8 @@ class MainWidget(BaseWidget):
 
 
     def lose(self):
-        pass
-        # self.level.lose()
-        # self.audio.reset()
+        self.level.lose()
+        self.audio.reset()
 
     # checks for loss conditions and returns ground level if player is on ground, otherwise
     def check_block_collision_and_death(self):
@@ -178,7 +179,11 @@ class MainWidget(BaseWidget):
         return 0
 
     def on_update(self):
-        dt = 1
+        prev_time = self.time
+        new_time = self.audio.sched.get_tick() * (512./480.)
+        dt = int((new_time*1. - prev_time)/16)
+        self.time = prev_time + dt*16
+
         self.info.text = 'fps:%d' % kivyClock.get_fps()
         ground = self.check_block_collision_and_death()
         self.player.on_update(dt, self.level.alive, ground)

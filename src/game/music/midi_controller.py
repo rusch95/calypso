@@ -38,8 +38,6 @@ class MidiController(object):
         self.mid_messages = [m for m in messages if m.channel == 0]
         self.platform_messages = [m for m in messages if m.channel == 1]
 
-
-
         # create TempoMap, AudioScheduler
         self.tempo_map = SimpleTempoMap(160)
         self.sched = AudioScheduler(self.tempo_map)
@@ -78,7 +76,7 @@ class MidiController(object):
         self.playing_notes = set([])
 
         # print "SR= ",Audio.sample_rate
-        self.beat = WaveFile("music/12911_sweet_trip_mm_hat_cl.wav")
+        # self.beat = WaveFile("music/12911_sweet_trip_mm_hat_cl.wav")
 
 
         self.current_offset = 0
@@ -104,7 +102,6 @@ class MidiController(object):
         self.current_offset = next_beat
 
         self.schedule_cmd = self.sched.post_at_tick(next_beat, self._midi_schedule_next_note, self.num_reverses)
-        self.mark_beat_cmd = self.sched.post_at_tick(next_beat, self._mark_beat, 0)
 
         def callback(*args):
             if start_callback is not None:
@@ -116,9 +113,6 @@ class MidiController(object):
 
         if self.schedule_action:
             self.sched.remove(self.schedule_action)
-
-        if self.mark_beat_cmd:
-            self.sched.remove(self.mark_beat_cmd)
 
         for channel, note in self.playing_notes:
             self.synth.noteoff(channel, note)
@@ -146,11 +140,6 @@ class MidiController(object):
 
         self.reverse_callback = callback
 
-    def _mark_beat(self, tick, arg):
-        print "---------------------------------------"
-        self.mixer.add(WaveGenerator(self.beat))
-        next_beat = quantize_tick_up(self.sched.get_tick() + 1, BEAT_LEN)
-        self.mark_beat_cmd = self.sched.post_at_tick(next_beat, self._mark_beat, 0)
 
     def _reverse(self, tick, arg):
         self.reverse_pending = False
