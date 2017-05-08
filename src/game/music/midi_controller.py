@@ -2,8 +2,10 @@
 
 
 import sys
+# sys.path.append('..')
 
-sys.path.append('..')
+from common.wavegen import WaveGenerator
+from common.wavesrc import WaveFile
 from common.core import *
 from common.clock import *
 from common.audio import *
@@ -15,218 +17,11 @@ from common.synth import *
 
 import numpy as np
 
+import midi
 
-# generates audio data by asking an audio-source (ie, WaveFile) for that data.
-class WaveGenerator2(object):
-    def __init__(self, wave_source, loop=False):
-        super(WaveGenerator2, self).__init__()
-        self.source = wave_source
-        self.loop = loop
-        self.frame = 0
-        self.paused = False
-        self._release = False
-        self.gain = 1.0
-        self.forwards = True
-
-    def reset(self):
-        self.paused = True
-        self.frame = 0
-
-    def play_toggle(self):
-        self.paused = not self.paused
-
-    def play(self):
-        self.paused = False
-
-    def pause(self):
-        self.paused = True
-
-    def release(self):
-        self._release = True
-
-    def reverse(self, forwards=None):
-        if forwards is not None:
-            self.forwards = forwards
-        else:
-            self.forwards ^= 1
-
-    def set_gain(self, g):
-        self.gain = g
-
-    def get_gain(self):
-        return self.gain
-
-    def generate(self, num_frames, num_channels):
-        if self.paused:
-            output = np.zeros(num_frames * num_channels)
-            return (output, True)
-
-        else:
-            # get data based on our position and requested # of frames
-            if self.forwards:
-                output = self.source.get_frames(self.frame, self.frame + num_frames)
-            else:
-                output = self.source.get_frames(max(0, self.frame - num_frames), self.frame)
-                print
-            output *= self.gain
-
-            # check for end-of-buffer condition:
-            actual_num_frames = len(output) / num_channels
-            continue_flag = actual_num_frames == num_frames
-
-            # advance current-frame
-            if self.forwards:
-                self.frame += actual_num_frames
-            else:
-                self.frame -= actual_num_frames
-
-            # looping. If we got to the end of the buffer, don't actually end.
-            # Instead, read some more from the beginning
-            if self.loop and not continue_flag:
-                continue_flag = True
-                remainder = num_frames - actual_num_frames
-                if self.forwards:
-                    output = np.append(output, self.source.get_frames(0, remainder))
-                    self.frame = remainder
-                else:
-                    raise NotImplementedError
-
-            if self._release:
-                continue_flag = False
-
-            # zero-pad if output is too short (may happen if not looping / end of buffer)
-            shortfall = num_frames * num_channels - len(output)
-            if shortfall > 0:
-                output = np.append(output, np.zeros(shortfall))
-
-            # return
-            return (output, continue_flag)
+BEAT_LEN = 160*6
 
 
-BEAT_LEN = 1800
-
-
-class MainWidget(BaseWidget):
-    def __init__(self):
-        super(MainWidget, self).__init__()
-
-        self.midi_controller = MidiController("grieg_mountain_king.mid")
-
-        # and text to display our status
-        self.label = topleft_label()
-        self.add_widget(self.label)
-
-    def on_key_down(self, keycode, modifiers):
-        # play / pause toggle
-        if keycode[1] == 'p':
-            self.midi_controller.toggle()
-        elif keycode[1] == 'r':
-            self.midi_controller.reverse()
-        elif keycode[1] == 's':
-            self.midi_controller.start()
-        elif keycode[1] == '1':
-            print self.midi_controller.sched.now_str()
-
-    def on_key_up(self, keycode):
-        # button up
-        pass
-
-    def on_update(self):
-        self.midi_controller.on_update()
-        # self.label.text = self.audio_controller.sched.now_str() + '\n'
-        self.label.text = self.midi_controller.sched.now_str() + '\n'
-
-
-# creates the Audio driver
-# creates a song and loads it with solo and bg audio tracks
-# creates snippets for audio sound fx
-class AudioController(object):
-    def __init__(self, song_path):
-        super(AudioController, self).__init__()
-        self.audio = Audio(2)
-        self.mixer = Mixer()
-        self.audio.set_generator(self.mixer)
-
-        self.solo_gen = WaveGenerator2(WaveFile(song_path))
-
-        self.mixer.add(self.solo_gen)
-        self.mixer.set_gain(1)
-
-        # self.synth = Synth('data/The_Nes_Soundfont.sf2')
-        #
-        # # create TempoMap, AudioScheduler
-        # self.tempo_map  = SimpleTempoMap(120)
-        # self.sched = AudioScheduler(self.tempo_map)
-        #
-        # # connect scheduler into audio system
-        # self.mixer.add(self.sched)
-        # self.sched.set_generator(self.synth)
-        #
-        #
-        # self.synth.program(2, 0, 0)
-
-    # start / stop the song
-    def toggle(self):
-        self.solo_gen.play_toggle()
-
-    # mute / unmute the solo track
-    def set_mute(self, mute):
-        self.solo_gen.set_gain(0 if mute else 1)
-
-    # reverse music
-    def reverse(self):
-        self.solo_gen.reverse()
-
-    def current_time(self):
-        return self.solo_gen.frame * (1. / SIGNAL_RATE)
-
-    # needed to update audio
-    def on_update(self):
-        self.audio.on_update()
-
-
-def copy_midi_msg(old_msg, time=None, reverse_type=True, velocity=None):
-    if not reverse_type:
-        raise NotImplementedError
-
-    new_type = old_msg.type
-    # TODO: deal properly with control changes
-    new_dict = dict(old_msg.dict())
-
-    if time is not None:
-        new_dict['time'] = time
-
-    if velocity is not None:
-        new_dict['velocity'] = velocity
-
-    if old_msg.type == 'note_on':
-        new_type = 'note_off'
-        new_dict['velocity'] = 0
-    elif old_msg.type == 'note_off':
-        new_type = 'note_on'
-    new_dict['type'] = new_type
-
-    try:
-        return mido.Message(**new_dict)
-    except LookupError:
-        return None
-
-
-def reverse_messages(msg_list):
-    """Takes a list of MIDI messages and returns a list of messages that, when taken in reverse order, correspond to playing the song backwards."""
-    reversed_list = list(msg_list)
-    current_velocities = dict()
-    for i, a in enumerate(msg_list):
-        b = msg_list[i - 1]
-        vel = current_velocities.get(b.dict().get('note', None), None)
-        reversed_list[i - 1] = copy_midi_msg(b, time=a.time, reverse_type=True, velocity=vel)
-        if b.type == 'note_on':
-            current_velocities[b.note] = b.velocity
-
-    return reversed_list
-
-
-import mido
 
 
 class MidiController(object):
@@ -237,9 +32,13 @@ class MidiController(object):
 
         self.synth = Synth('music/The_Nes_Soundfont.sf2')
 
-        self.mid = mido.MidiFile(song_path)
-        self.mid_messages = list(self.mid)
-        self.reversed_messages = reverse_messages(self.mid_messages)
+        self.mid = midi.read_midifile(song_path)
+        messages = list(self.mid.iterevents())
+
+        self.mid_messages = [m for m in messages if m.channel == 0]
+        self.platform_messages = [m for m in messages if m.channel == 1]
+
+
 
         # create TempoMap, AudioScheduler
         self.tempo_map = SimpleTempoMap(160)
@@ -278,6 +77,16 @@ class MidiController(object):
         # this keeps track of all the notes currently playing so we can stop them if we get reset.
         self.playing_notes = set([])
 
+        # print "SR= ",Audio.sample_rate
+        self.beat = WaveFile("music/12911_sweet_trip_mm_hat_cl.wav")
+
+
+        self.current_offset = 0
+
+        # current notes on and their velocities. Helps with reversing
+        self.current_values = dict()
+
+
     def toggle(self):
         """pauses or plays the music."""
         self.paused ^= True
@@ -292,6 +101,7 @@ class MidiController(object):
 
     def start(self, start_callback=None):
         next_beat = quantize_tick_up(self.sched.get_tick(), BEAT_LEN)
+        self.current_offset = next_beat
 
         self.schedule_cmd = self.sched.post_at_tick(next_beat, self._midi_schedule_next_note, self.num_reverses)
         self.mark_beat_cmd = self.sched.post_at_tick(next_beat, self._mark_beat, 0)
@@ -312,7 +122,7 @@ class MidiController(object):
 
         for channel, note in self.playing_notes:
             self.synth.noteoff(channel, note)
-        self.playing_notes = set()
+        self.playing_notes.clear()
 
         self.reversed = False
         self.current_idx = 0
@@ -338,6 +148,7 @@ class MidiController(object):
 
     def _mark_beat(self, tick, arg):
         print "---------------------------------------"
+        self.mixer.add(WaveGenerator(self.beat))
         next_beat = quantize_tick_up(self.sched.get_tick() + 1, BEAT_LEN)
         self.mark_beat_cmd = self.sched.post_at_tick(next_beat, self._mark_beat, 0)
 
@@ -357,14 +168,32 @@ class MidiController(object):
 
         # start with the same index as we last executed.
         if self.reversed:
-            self.current_idx -= 2
+            self.current_idx -= 1
         else:
-            self.current_idx += 2
+            self.current_idx += 1
 
         # call the first action in the opposite direction
-        print "REVERSE"
+        # print "REVERSE", tick, self.current_offset
         self.num_reverses += 1
+
+        # old_offset = self.current_offset
+        # current_tick = tick
+        # current_offsettick =
+        # old_func = old_offset + time_on_note
+        # new func = new_offset - time_on_note
+        # old_func = new_func when current_tick = time_on_note
+        # new_offset = old_offset + 2 * current_tick
+
+        self.current_offset += 2*(tick - self.current_offset)
+
         self._midi_schedule_next_note(tick, self.num_reverses)
+
+
+    def convert_tick(self, song_tick):
+        if self.reversed:
+            return self.current_offset - song_tick
+        else:
+            return self.current_offset + song_tick
 
     def _midi_schedule_next_note(self, tick, num_reverses):
         # to prevent multiple streams of notes from going at once
@@ -372,7 +201,7 @@ class MidiController(object):
             return
 
         if self.reversed:
-            to_schedule = self.reversed_messages[self.current_idx]
+            to_schedule = self.mid_messages[self.current_idx]
             self.current_idx -= 1
 
         else:
@@ -382,7 +211,10 @@ class MidiController(object):
         if to_schedule is None:
             print "end of song"
             return
-        next_tick = self.sched.get_tick() + to_schedule.time * 800
+
+        next_tick = self.convert_tick(to_schedule.tick)
+        # print "NOTE",next_tick, to_schedule, self.current_idx, self.current_offset
+
         self.schedule_action = self.sched.post_at_tick(next_tick, self._midi_action, to_schedule)
 
         # schedule another call to this function at the same time.
@@ -391,23 +223,25 @@ class MidiController(object):
     def _midi_action(self, tick=0.0, message=None):
         self.schedule_action = None
 
-        if message.is_meta:
-            return
 
-        if message.type == 'note_on':
-            self.synth.noteon(message.channel, message.note, message.velocity)
-            self.playing_notes.add((message.channel, message.note))
-            print '%snote on: %d' % ((message.note - 20) * ' ', message.note)
-        elif message.type == 'control_change':
+        if (message.type == 'NoteOnEvent' and not self.reversed) or (self.reversed and message.type == 'NoteOffEvent'):
+            self.synth.noteon(message.channel, message.pitch, message.velocity)
+            if not self.reversed:
+                self.current_values[(message.channel, message.pitch)] = message.velocity
+            # self.playing_notes.add((message.channel, message.pitch))
+            print '%snote on: %d' % ((message.pitch - 20) * ' ', message.pitch)
+        elif message.type == 'ControlChangeEvent':
             self.synth.cc(message.channel, message.control, message.value)
-        elif message.type == 'note_off':
-            self.synth.noteoff(message.channel, message.note)
+        elif (message.type == 'NoteOffEvent' and not self.reversed) or (self.reversed and message.type == 'NoteOnEvent'):
+            self.synth.noteoff(message.channel, message.pitch)
+            if not self.reversed:
+                message.velocity = self.current_values[(message.channel, message.pitch)]
             try:
-                self.playing_notes.remove((message.channel, message.note))
+                self.playing_notes.remove((message.channel, message.pitch))
             except KeyError:
                 pass
-            print "%snote off: %d" % ((message.note - 20) * ' ', message.note)
-        elif message.type == 'program_change':
+            print "%snote off: %d" % ((message.pitch - 20) * ' ', message.pitch)
+        else:
             print message
             # TODO: figure out what to do with program changes
 

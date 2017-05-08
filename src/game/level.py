@@ -3,20 +3,56 @@ from block import *
 from checkpoint import *
 
 
+
+def convert_tick_to_x(tick):
+    return tick*16/15
+
 class Level(InstructionGroup):
-    def __init__(self, text_file):
+    def __init__(self, platform_messages):
         super(Level, self).__init__()
 
         self.translator = Translate()
         self.add(self.translator)
 
-        # self.jump_times = None
-        # self.duck_times = None
-        # self.platforms = None
-        self.blocks = []
-        self.checkpoints = []
+        where_started = {}
+        for msg in platform_messages:
+            if msg.type == 'NoteOnEvent':
+                where_started[msg.pitch] = msg.tick
+            elif msg.type == 'NoteOffEvent':
+                begin = convert_tick_to_x(where_started[msg.pitch])
+                end = convert_tick_to_x(msg.tick)
+
+
+
+                CHECKPOINT_PITCH = 0
+                COLORS_MIDI = [None, RED_IDX, GREEN_IDX, BLUE_IDX, WHITE_IDX, None]
+
+
+
+                self.checkpoints = []
+                self.blocks = []
+
+                if msg.pitch == CHECKPOINT_PITCH:
+                    cp = CheckPoint(end, self.translator)
+                    self.add(cp)
+                    self.checkpoints.add(cp)
+                elif msg.pitch >= 12:
+                    # print msg,begin*1./PIXEL, end*1./PIXEL, color_idx, height
+                    block_len = (end-begin) / 64
+                    height = msg.pitch / 6 - 2
+
+                    color_idx = msg.pitch % 6
+                    color = COLORS_MIDI[color_idx]
+
+                    for i in xrange(block_len):
+                        block = Block(init_pos=begin + i*PIXEL, y=height*PIXEL, color_idx=color, translator=self.translator)
+                        self.blocks.append(block)
+                        self.add(block)
+
+
+        # self.jump_times = No
         for i in xrange(50):
-            xbar = PIXEL*i*5
+            xbar = 360*i + 210
             xcheck = PIXEL*i*25+PIXEL*3
             xr = PIXEL*i
             xg = PIXEL*i+PIXEL*50
@@ -31,28 +67,30 @@ class Level(InstructionGroup):
             self.add(self.checkpoint)
             self.checkpoints.append(self.checkpoint)
 
-            # platforms
-            self.block = Block(xr, PIXEL, RED_IDX, self.translator)
-            self.add(self.block)
-            self.blocks.append(self.block)
-            self.block = Block(xg, PIXEL, GREEN_IDX, self.translator)
-            self.add(self.block)
-            self.blocks.append(self.block)
-            self.block = Block(xb, 3*PIXEL, BLUE_IDX, self.translator)
-            self.add(self.block)
-            self.blocks.append(self.block)
+            ### platforms
+            # self.block = Block(xr, PIXEL, RED_IDX, self.translator)
+            # self.add(self.block)
+            # self.blocks.append(self.block)
+            # self.block = Block(xg, PIXEL, GREEN_IDX, self.translator)
+            # self.add(self.block)
+            # self.blocks.append(self.block)
+            # self.block = Block(xb, 3*PIXEL, BLUE_IDX, self.translator)
+            # self.add(self.block)
+            # self.blocks.append(self.block)
 
-            # dodge blocks
-            self.block = Block(xl, 2*PIXEL, WHITE_IDX, self.translator)
-            self.add(self.block)
-            self.blocks.append(self.block)
-            self.block = Block(xh, 4*PIXEL, WHITE_IDX, self.translator)
-            self.add(self.block)
-            self.blocks.append(self.block)
+            ### dodge blocks
+            # self.block = Block(xl, 2*PIXEL, WHITE_IDX, self.translator)
+            # self.add(self.block)
+            # self.blocks.append(self.block)
+            # self.block = Block(xh, 4*PIXEL, WHITE_IDX, self.translator)
+            # self.add(self.block)
+            # self.blocks.append(self.block)
 
-        self.block = Block(17*PIXEL, 4*PIXEL, WHITE_IDX, self.translator, moving=True)
-        self.add(self.block)
-        self.blocks.append(self.block)
+        self.moving_blocks = []
+        moving_block = Block(17*PIXEL, 4*PIXEL, WHITE_IDX, self.translator, moving=True)
+        self.add(moving_block)
+        self.blocks.append(moving_block)
+        self.moving_blocks.append(moving_block)
 
         self.direction = 0
         self.alive = True
@@ -107,4 +145,5 @@ class Level(InstructionGroup):
     def on_update(self, dt):
         self.translator.x -= self.direction * SPEED
         if self.alive:
-            self.block.on_update()
+            for block in self.moving_blocks:
+                block.on_update()

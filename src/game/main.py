@@ -31,14 +31,17 @@ class MainWidget(BaseWidget):
         self.player = Player((PLAYER_X, PLAYER_Y))
         self.canvas.add(self.player)
 
-        self.level = Level('level.txt')
+        self.audio = MidiController("music/grieg_mountain_king_with_levels.mid", self.level_on_update)
+        self.level = Level(self.audio.platform_messages)
         self.canvas.add(self.level)
 
         Window.bind(on_joy_axis=self.on_joy_axis)
         Window.bind(on_joy_button_down=self.on_joy_button_down)
         Window.bind(on_joy_hat=self.on_joy_hat)
-        self.audio = MidiController("music/grieg_mountain_king.mid", self.level.on_update)
-      
+
+    def level_on_update(self, *args, **kwargs):
+        return self.level.on_update(*args, **kwargs)
+
     def on_key_down(self, keycode, modifiers):
         if keycode[1] == 'up':
             self.up()
@@ -147,9 +150,9 @@ class MainWidget(BaseWidget):
 
 
     def lose(self):
-        # pass
-        self.level.lose()
-        self.audio.reset()
+        pass
+        # self.level.lose()
+        # self.audio.reset()
 
     # checks for loss conditions and returns ground level if player is on ground, otherwise
     def check_block_collision_and_death(self):
