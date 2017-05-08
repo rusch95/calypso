@@ -30,7 +30,7 @@ class Block(InstructionGroup):
             self.speed = speed
             self.up = True
 
-        texture = Image(source='../../data/grayscale_girder.png').texture
+        texture = Image(source='../../data/tiles/grayscale_girder.png').texture
 
         # Create block
         self.add(self.color)

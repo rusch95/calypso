@@ -29,12 +29,12 @@ class Player(InstructionGroup):
         self.color_idx = 0
         self.frame = 0
 
-        red = Image(source='../../data/player_red.png').texture
-        green = Image(source='../../data/player_green.png').texture
-        blue = Image(source='../../data/player_blue.png').texture
-        red_duck = Image(source='../../data/player_duck_red.png').texture
-        green_duck = Image(source='../../data/player_duck_green.png').texture
-        blue_duck = Image(source='../../data/player_duck_blue.png').texture
+        red = Image(source='../../data/player/player_red.png').texture
+        green = Image(source='../../data/player/player_green.png').texture
+        blue = Image(source='../../data/player/player_blue.png').texture
+        red_duck = Image(source='../../data/player/player_duck_red.png').texture
+        green_duck = Image(source='../../data/player/player_duck_green.png').texture
+        blue_duck = Image(source='../../data/player/player_duck_blue.png').texture
         red_frames = [TextureHolder(red.get_region(64 * x, 0, 64, 128)) for x in xrange(8)]
         green_frames = [TextureHolder(green.get_region(64 * x, 0, 64, 128)) for x in xrange(8)]
         blue_frames = [TextureHolder(blue.get_region(64 * x, 0, 64, 128)) for x in xrange(8)]
