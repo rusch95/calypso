@@ -1,4 +1,5 @@
 import sys
+
 sys.path.append('..')
 from common.core import *
 from common.gfxutil import *
@@ -18,6 +19,7 @@ import pdb
 
 Window.size = WINDOW_SIZE
 
+
 class MainWidget(BaseWidget):
     def __init__(self):
         super(MainWidget, self).__init__()
@@ -26,7 +28,7 @@ class MainWidget(BaseWidget):
         self.add_widget(self.info)
 
         self.canvas.add(Color(.4, .4, .75))
-        self.canvas.add(Rectangle(pos=(0,0),size=Window.size))
+        self.canvas.add(Rectangle(pos=(0, 0), size=Window.size))
 
         self.player = Player((PLAYER_X, PLAYER_Y))
         self.canvas.add(self.player)
@@ -96,7 +98,7 @@ class MainWidget(BaseWidget):
         if axisid == Y_AXIS and -JOYSTICK_THRESH < value < JOYSTICK_THRESH:
             self.neutral()
 
-    def on_joy_hat(self, window, null1,  null2, coords):
+    def on_joy_hat(self, window, null1, null2, coords):
         x, y = coords
         if y == 1:
             self.up()
@@ -126,6 +128,7 @@ class MainWidget(BaseWidget):
             def complete_reverse():
                 self.level.reverse()
                 self.player.left()
+
             self.audio.reverse(complete_reverse)
 
     def right(self):
@@ -133,6 +136,7 @@ class MainWidget(BaseWidget):
             def complete_reverse():
                 self.level.forward()
                 self.player.right()
+
             self.audio.reverse(complete_reverse)
 
     def start(self):
@@ -142,14 +146,13 @@ class MainWidget(BaseWidget):
 
     def reset(self):
         self.player.un_duck()
-        y_pos,color_idx,y_vel = self.level.reset()
-        self.player.reset(y_pos,color_idx,y_vel)
+        y_pos, color_idx, y_vel = self.level.reset()
+        self.player.reset(y_pos, color_idx, y_vel)
         self.audio.reset()
 
     def set_color(self, color_idx):
         if self.level.alive:
             self.player.set_color(color_idx)
-
 
     def lose(self):
         self.level.lose()
@@ -165,7 +168,7 @@ class MainWidget(BaseWidget):
         # fall if no blocks
         if not current_blocks:
             return 0
-        
+
         for b in current_blocks:
             ground = b.on_ground(self.player)
             # check if on the ground and return ground level if so
@@ -180,9 +183,9 @@ class MainWidget(BaseWidget):
 
     def on_update(self):
         prev_time = self.time
-        new_time = self.audio.sched.get_tick() * (512./480.)
-        dt = int((new_time*1. - prev_time)/16)
-        self.time = prev_time + dt*16
+        new_time = self.audio.sched.get_tick() * (512. / 480.)
+        dt = int((new_time * 1. - prev_time) / 16)
+        self.time = prev_time + dt * 16
 
         self.info.text = 'fps:%d' % kivyClock.get_fps()
         ground = self.check_block_collision_and_death()
@@ -190,5 +193,6 @@ class MainWidget(BaseWidget):
         self.level.check_checkpoint(self.player.pos[1], self.player.color_idx, self.player.y_vel)
         self.level.on_update(dt)
         self.audio.on_update()
+
 
 run(MainWidget)

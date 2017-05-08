@@ -6,6 +6,7 @@ from kivy.uix.image import Image
 
 from const import *
 
+
 class Barline(InstructionGroup):
     def __init__(self, init_pos, translator):
         super(Barline, self).__init__()
@@ -15,7 +16,7 @@ class Barline(InstructionGroup):
         self.x = init_pos + BAR_OFFSET
         self.translator = translator
         self.color = GREY
-        
+
         # Create bar
         self.add(self.color)
         self.block = Rectangle(pos=(self.x, 0), size=(BAR_W, BAR_H))

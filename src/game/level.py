@@ -3,9 +3,9 @@ from block import *
 from checkpoint import *
 
 
-
 def convert_tick_to_x(tick):
-    return tick*4/15 + PLAYER_X
+    return tick * 4 / 15 + PLAYER_X
+
 
 class Level(InstructionGroup):
     def __init__(self, platform_messages):
@@ -17,8 +17,8 @@ class Level(InstructionGroup):
         self.checkpoints = []
         self.blocks = []
 
-        for i in xrange(0,PLAYER_X+1,PIXEL):
-            start_block = Block(init_pos=i,y=PIXEL,color_idx=RED_IDX, translator=self.translator)
+        for i in xrange(0, PLAYER_X + 1, PIXEL):
+            start_block = Block(init_pos=i, y=PIXEL, color_idx=RED_IDX, translator=self.translator)
             self.add(start_block)
             self.blocks.append(start_block)
 
@@ -38,15 +38,16 @@ class Level(InstructionGroup):
                     self.add(cp)
                     self.checkpoints.add(cp)
                 elif msg.pitch >= 12:
-                    print msg,begin*1./PIXEL, end*1./PIXEL
-                    block_len = (end-begin) / 64
+                    print msg, begin * 1. / PIXEL, end * 1. / PIXEL
+                    block_len = (end - begin) / 64
                     height = msg.pitch / 6 - 1
 
                     color_idx = msg.pitch % 6
                     color = COLORS_MIDI[color_idx]
 
                     for i in xrange(block_len):
-                        block = Block(init_pos=begin + i*PIXEL, y=height*PIXEL, color_idx=color, translator=self.translator)
+                        block = Block(init_pos=begin + i * PIXEL, y=height * PIXEL, color_idx=color,
+                                      translator=self.translator)
                         self.blocks.append(block)
                         self.add(block)
 
@@ -56,13 +57,13 @@ class Level(InstructionGroup):
 
         # self.jump_times = No
         for i in xrange(50):
-            xbar = 384*i
-            xcheck = PIXEL*i*25+PIXEL*3
-            xr = PIXEL*i
-            xg = PIXEL*i+PIXEL*50
-            xb = PIXEL*i+PIXEL*16
-            xl = PIXEL*16*i+PIXEL*16
-            xh = PIXEL*16*i+PIXEL*24
+            xbar = 384 * i
+            xcheck = PIXEL * i * 25 + PIXEL * 3
+            xr = PIXEL * i
+            xg = PIXEL * i + PIXEL * 50
+            xb = PIXEL * i + PIXEL * 16
+            xl = PIXEL * 16 * i + PIXEL * 16
+            xh = PIXEL * 16 * i + PIXEL * 24
             # barlines
             self.bar = Barline(xbar, self.translator)
             self.add(self.bar)
@@ -91,7 +92,7 @@ class Level(InstructionGroup):
             # self.blocks.append(self.block)
 
         self.moving_blocks = []
-        moving_block = Block(17*PIXEL, 4*PIXEL, WHITE_IDX, self.translator, moving=True)
+        moving_block = Block(17 * PIXEL, 4 * PIXEL, WHITE_IDX, self.translator, moving=True)
         self.add(moving_block)
         self.blocks.append(moving_block)
         self.moving_blocks.append(moving_block)
@@ -99,7 +100,7 @@ class Level(InstructionGroup):
         self.direction = 0
         self.alive = True
         self.checkpoint_pos = 0
-        self.checkpoint_y = PIXEL*2
+        self.checkpoint_y = PIXEL * 2
         self.checkpoint_color = RED_IDX
         self.checkpoint_y_vel = 0
         self.checkpoint = self.checkpoints[0]
@@ -108,14 +109,14 @@ class Level(InstructionGroup):
         current_blocks = []
         for b in self.blocks:
             b_pos = b.get_current_pos()
-            if b_pos+b.width >= PLAYER_X and b_pos <= PLAYER_X + PLAYER_W:
+            if b_pos + b.width >= PLAYER_X and b_pos <= PLAYER_X + PLAYER_W:
                 current_blocks.append(b)
         return current_blocks
 
     def check_checkpoint(self, player_y, color_idx, y_vel):
         for c in self.checkpoints:
             c_pos = c.get_current_pos()
-            if c_pos+BAR_W >= PLAYER_X and c_pos <= PLAYER_X+PLAYER_W and c != self.checkpoint:
+            if c_pos + BAR_W >= PLAYER_X and c_pos <= PLAYER_X + PLAYER_W and c != self.checkpoint:
                 self.checkpoint_pos = self.translator.x
                 self.checkpoint_y = player_y
                 self.checkpoint_color = color_idx
@@ -141,7 +142,7 @@ class Level(InstructionGroup):
         self.translator.x = self.checkpoint_pos
         self.direction = 0
         self.alive = True
-        return self.checkpoint_y,self.checkpoint_color,self.checkpoint_y_vel
+        return self.checkpoint_y, self.checkpoint_color, self.checkpoint_y_vel
 
     def start(self):
         self.direction = 1

@@ -1,10 +1,8 @@
-from kivy.core.window import Window
+from kivy.graphics import Rectangle
 from kivy.graphics.instructions import InstructionGroup
-from kivy.graphics import Color, Ellipse, Rectangle, Line
-from kivy.graphics import Translate
-from kivy.uix.image import Image
 
 from const import *
+
 
 class CheckPoint(InstructionGroup):
     def __init__(self, init_pos, translator):
@@ -15,7 +13,7 @@ class CheckPoint(InstructionGroup):
         self.x = init_pos + BAR_OFFSET
         self.translator = translator
         self.color = LIGHT_PURPLE
-        
+
         # Create bar
         self.add(self.color)
         self.block = Rectangle(pos=(self.x, 0), size=(BAR_W, BAR_H))

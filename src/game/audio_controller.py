@@ -1,4 +1,5 @@
 import sys
+
 sys.path.append('..')
 from common.core import *
 from common.audio import *
@@ -7,6 +8,7 @@ from common.wavegen import *
 from common.wavesrc import *
 from common.gfxutil import *
 from common.gfxutil import *
+
 
 # creates the Audio driver
 # creates a song and loads it with solo and bg audio tracks

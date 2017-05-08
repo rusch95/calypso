@@ -1,27 +1,19 @@
 # pset7.py
 
 
-import sys
 # sys.path.append('..')
 
-from common.wavegen import WaveGenerator
-from common.wavesrc import WaveFile
-from common.core import *
-from common.clock import *
+import midi
 from common.audio import *
+from common.clock import *
+from common.core import *
+from common.gfxutil import *
 from common.mixer import *
+from common.synth import *
 from common.wavegen import *
 from common.wavesrc import *
-from common.gfxutil import *
-from common.synth import *
 
-import numpy as np
-
-import midi
-
-BEAT_LEN = 160*6
-
-
+BEAT_LEN = 160 * 6
 
 
 class MidiController(object):
@@ -84,7 +76,6 @@ class MidiController(object):
         # current notes on and their velocities. Helps with reversing
         self.current_values = dict()
 
-
     def toggle(self):
         """pauses or plays the music."""
         self.paused ^= True
@@ -140,7 +131,6 @@ class MidiController(object):
 
         self.reverse_callback = callback
 
-
     def _reverse(self, tick, arg):
         self.reverse_pending = False
         if self.reverse_callback is not None:
@@ -173,10 +163,9 @@ class MidiController(object):
         # old_func = new_func when current_tick = time_on_note
         # new_offset = old_offset + 2 * current_tick
 
-        self.current_offset += 2*(tick - self.current_offset)
+        self.current_offset += 2 * (tick - self.current_offset)
 
         self._midi_schedule_next_note(tick, self.num_reverses)
-
 
     def convert_tick(self, song_tick):
         if self.reversed:
@@ -212,7 +201,6 @@ class MidiController(object):
     def _midi_action(self, tick=0.0, message=None):
         self.schedule_action = None
 
-
         if (message.type == 'NoteOnEvent' and not self.reversed) or (self.reversed and message.type == 'NoteOffEvent'):
             self.synth.noteon(message.channel, message.pitch, message.velocity)
             if not self.reversed:
@@ -221,7 +209,8 @@ class MidiController(object):
             print '%snote on: %d' % ((message.pitch - 20) * ' ', message.pitch)
         elif message.type == 'ControlChangeEvent':
             self.synth.cc(message.channel, message.control, message.value)
-        elif (message.type == 'NoteOffEvent' and not self.reversed) or (self.reversed and message.type == 'NoteOnEvent'):
+        elif (message.type == 'NoteOffEvent' and not self.reversed) or (
+            self.reversed and message.type == 'NoteOnEvent'):
             self.synth.noteoff(message.channel, message.pitch)
             if not self.reversed:
                 message.velocity = self.current_values[(message.channel, message.pitch)]

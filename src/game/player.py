@@ -6,10 +6,12 @@ from kivy.uix.image import Image
 
 from const import *
 
+
 class TextureHolder(object):
     def __init__(self, texture):
         self.texture = texture
         self.right = True
+
 
 class Player(InstructionGroup):
     def __init__(self, init_pos):
@@ -96,7 +98,7 @@ class Player(InstructionGroup):
     def on_update(self, dt, alive, ground):
         # Update position with physics
         if alive:
-            self.y_vel += dt*self.gravity
+            self.y_vel += dt * self.gravity
             if ground and not self.jumped:
                 self.pos = (self.pos[0], ground)
             else:
@@ -104,7 +106,7 @@ class Player(InstructionGroup):
         if self.pos[1] == ground:
             self.can_jump = True
             self.y_vel = 0
-        
+
         self.next_frame()
 
         # Update person

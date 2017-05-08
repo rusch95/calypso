@@ -6,10 +6,11 @@ from kivy.uix.image import Image
 
 from const import *
 
+
 class Block(InstructionGroup):
-    def __init__(self, init_pos, y, color_idx, 
-                 translator, width=BLOCK_W, height=BLOCK_H, 
-                 moving=False, miny=BLOCK_MIN, maxy=BLOCK_MAX, 
+    def __init__(self, init_pos, y, color_idx,
+                 translator, width=BLOCK_W, height=BLOCK_H,
+                 moving=False, miny=BLOCK_MIN, maxy=BLOCK_MAX,
                  speed=BLOCK_SPEED, texture=None):
         super(Block, self).__init__()
 
@@ -23,7 +24,7 @@ class Block(InstructionGroup):
         self.color = COLORS[color_idx]
         self.color_idx = color_idx
         self.moving = moving
-        
+
         if self.moving:
             self.miny = miny
             self.maxy = maxy
@@ -46,9 +47,9 @@ class Block(InstructionGroup):
     def check_game_loss(self, player):
         if self.color_idx == WHITE_IDX or player.color_idx == self.color_idx:
             player_bottom = player.pos[1]
-            player_top = player.pos[1]+player.size[1]
+            player_top = player.pos[1] + player.size[1]
             block_bottom = self.y
-            block_top = self.y+self.height
+            block_top = self.y + self.height
             if player_bottom >= block_top or player_top <= block_bottom:
                 return False
             return True
@@ -63,7 +64,7 @@ class Block(InstructionGroup):
     def reset(self):
         if self.moving:
             self.remove(self.block)
-            self.block = Rectangle(pos=(self.init_pos,self.init_y), size=(self.width, self.height))
+            self.block = Rectangle(pos=(self.init_pos, self.init_y), size=(self.width, self.height))
             self.add(self.block)
 
     def on_update(self):
@@ -80,5 +81,5 @@ class Block(InstructionGroup):
                 self.y -= self.speed
             # redraw block
             self.remove(self.block)
-            self.block = Rectangle(pos=(self.init_pos,self.y), size=(self.width, self.height))
+            self.block = Rectangle(pos=(self.init_pos, self.y), size=(self.width, self.height))
             self.add(self.block)
