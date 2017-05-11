@@ -91,7 +91,6 @@ class MidiController(object):
             # TODO: reschedule all scheduled notes
 
     def start(self, start_callback=None):
-        self.started = True
         next_beat = quantize_tick_up(self.sched.get_tick(), BEAT_LEN)
         self.current_offset = next_beat
 
@@ -175,17 +174,25 @@ class MidiController(object):
 
 
     def convert_tick(self, song_tick):
+        if self.reversed:
+            return self.current_offset - song_tick
+        else:
+            return self.current_offset + song_tick
+
+    def convert_tick_for_level(self, song_tick):
         if not self.started:
             return 0
         elif self.reversed:
             return self.current_offset - song_tick
         else:
-            return self.current_offset + song_tick
+            return -(self.current_offset - song_tick)
 
     def _midi_schedule_next_note(self, tick, num_reverses):
         # to prevent multiple streams of notes from going at once
         if num_reverses != self.num_reverses:
             return
+
+        self.started = True
 
         if self.reversed:
             to_schedule = self.mid_messages[self.current_idx]
@@ -235,7 +242,8 @@ class MidiController(object):
     # needed to update audio
     def on_update(self):
         self.audio.on_update()
-        self.level_update(loc=-self.convert_tick(self.sched.get_tick()))
+        print self.sched.get_tick(), self.current_offset, self.convert_tick_for_level(self.sched.get_tick())
+        self.level_update(loc=-self.convert_tick_for_level(self.sched.get_tick()))
 
 
 if __name__ == '__main__':
