@@ -18,10 +18,11 @@ Lotta:
 	DONE Colored Walls
 		DONE go through when different color, lose when same color
 	DONE Change everything to be 50x50
-	Checkpoints
-		graphics
-		logic
+	DONE Checkpoints
+		DONE graphics
+		DONE logic
 	DONE Change standard sizes to 64
+	Highlight next barline when reversing
 	
 Jakob:
 	PUNT change tone based on color
@@ -33,7 +34,7 @@ Jakob:
 	PUNT UNTIL FINAL make reversing into the back of the level not error out
 
 
-Rusch?:
+Rusch:
 	Add graphics
 		player graphics that keeps time
 			unicycle with a tick that rotates
@@ -41,3 +42,5 @@ Rusch?:
 		graphics for all the level elements
 		death animation: everything turns black and white
 	DONE Add controller support
+	Death animation
+	Fade colors that aren't your own
