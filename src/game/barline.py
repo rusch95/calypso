@@ -19,7 +19,7 @@ class Barline(InstructionGroup):
 
         # Create bar
         self.add(self.color)
-        self.block = Rectangle(pos=(self.x, 0), size=(BAR_W, BAR_H))
+        self.block = Rectangle(pos=(self.x-22, 0), size=(BAR_W, BAR_H))
         self.add(self.block)
 
     def get_current_pos(self):

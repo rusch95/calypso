@@ -3,8 +3,8 @@ from block import *
 from checkpoint import *
 
 
-def convert_tick_to_x(tick):
-    return tick * 4 / 15 + PLAYER_X
+def convert_tick_to_x(tick, include_player_x=True):
+    return tick * 4 / 15 + PLAYER_X*include_player_x
 
 
 class Level(InstructionGroup):
@@ -57,41 +57,10 @@ class Level(InstructionGroup):
         self.add(self.checkpoint)
         self.checkpoints.append(self.checkpoint)
 
-        # self.jump_times = No
-        for i in xrange(50):
-            xbar = 384 * i
-            xcheck = PIXEL * i * 25 + PIXEL * 3
-            xr = PIXEL * i
-            xg = PIXEL * i + PIXEL * 50
-            xb = PIXEL * i + PIXEL * 16
-            xl = PIXEL * 16 * i + PIXEL * 16
-            xh = PIXEL * 16 * i + PIXEL * 24
-            # barlines
+        for i in xrange(60):
+            xbar = 256 * i + PLAYER_X
             self.bar = Barline(xbar, self.translator)
             self.add(self.bar)
-
-            # self.checkpoint = CheckPoint(xcheck, self.translator)
-            # self.add(self.checkpoint)
-            # self.checkpoints.append(self.checkpoint)
-
-            ### platforms
-            # self.block = Block(xr, PIXEL, RED_IDX, self.translator)
-            # self.add(self.block)
-            # self.blocks.append(self.block)
-            # self.block = Block(xg, PIXEL, GREEN_IDX, self.translator)
-            # self.add(self.block)
-            # self.blocks.append(self.block)
-            # self.block = Block(xb, 3*PIXEL, BLUE_IDX, self.translator)
-            # self.add(self.block)
-            # self.blocks.append(self.block)
-
-            ### dodge blocks
-            # self.block = Block(xl, 2*PIXEL, WHITE_IDX, self.translator)
-            # self.add(self.block)
-            # self.blocks.append(self.block)
-            # self.block = Block(xh, 4*PIXEL, WHITE_IDX, self.translator)
-            # self.add(self.block)
-            # self.blocks.append(self.block)
 
         self.moving_blocks = []
         moving_block = Block(17 * PIXEL, 4 * PIXEL, WHITE_IDX, self.translator, moving=True)
@@ -150,11 +119,13 @@ class Level(InstructionGroup):
         self.direction = 1
 
     def on_update(self, loc=None):
-        if loc is not None:
-            self.translator.x = convert_tick_to_x(loc)
-            print "on_update", self.translator.x, loc
-        else:
-            self.translator.x -= self.direction * SPEED
         if self.alive:
             for block in self.moving_blocks:
                 block.on_update()
+
+            if loc is not None:
+                self.translator.x = convert_tick_to_x(loc, False)
+                # print "on_update", self.translator.x, loc
+            else:
+                self.translator.x -= self.direction * SPEED
+

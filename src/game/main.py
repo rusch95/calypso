@@ -148,7 +148,7 @@ class MainWidget(BaseWidget):
         self.player.un_duck()
         y_pos, color_idx, y_vel = self.level.reset()
         self.player.reset(y_pos, color_idx, y_vel)
-        self.audio.reset()
+        self.audio.reset(lost=False)
 
     def set_color(self, color_idx):
         if self.level.alive:
@@ -156,7 +156,7 @@ class MainWidget(BaseWidget):
 
     def lose(self):
         self.level.lose()
-        self.audio.reset()
+        self.audio.reset(lost=True)
 
     # checks for loss conditions and returns ground level if player is on ground, otherwise
     def check_block_collision_and_death(self):

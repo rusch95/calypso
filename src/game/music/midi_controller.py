@@ -77,6 +77,7 @@ class MidiController(object):
         self.current_values = dict()
 
         self.started = False
+        self.lose_tick = None
 
     def toggle(self):
         """pauses or plays the music."""
@@ -100,7 +101,7 @@ class MidiController(object):
             if start_callback is not None:
                 start_callback()
 
-    def reset(self):
+    def reset(self, lost=False):
         if self.schedule_cmd:
             self.sched.remove(self.schedule_cmd)
 
@@ -117,7 +118,11 @@ class MidiController(object):
         # so we don't keep playing scheduled notes
         self.num_reverses += 10
 
-        self.started = False
+        if not lost:
+            self.started = False
+            self.lose_tick = None
+        else:
+            self.lose_tick = self.convert_tick(self.sched.get_tick())
 
     # reverse music
     def reverse(self, callback=None):
@@ -182,6 +187,8 @@ class MidiController(object):
     def convert_tick_for_level(self, song_tick):
         if not self.started:
             return 0
+        elif self.lose_tick is not None:
+            return self.lose_tick
         elif self.reversed:
             return self.current_offset - song_tick
         else:
@@ -242,7 +249,7 @@ class MidiController(object):
     # needed to update audio
     def on_update(self):
         self.audio.on_update()
-        print self.sched.get_tick(), self.current_offset, self.convert_tick_for_level(self.sched.get_tick())
+        # print self.sched.get_tick(), self.current_offset, self.convert_tick_for_level(self.sched.get_tick())
         self.level_update(loc=-self.convert_tick_for_level(self.sched.get_tick()))
 
 
