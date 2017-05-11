@@ -13,6 +13,8 @@ class Level(InstructionGroup):
 
         self.translator = Translate()
         self.add(self.translator)
+        self.checkpoints = []
+        self.blocks = []
 
         self.checkpoints = []
         self.blocks = []
