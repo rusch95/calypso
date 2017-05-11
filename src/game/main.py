@@ -125,16 +125,16 @@ class MainWidget(BaseWidget):
 
     def left(self):
         if self.level.alive and self.level.direction == 1:
-            def complete_reverse():
-                self.level.reverse()
+            def complete_reverse(*args, **kwargs):
+                self.level.reverse(*args, **kwargs)
                 self.player.left()
 
             self.audio.reverse(complete_reverse)
 
     def right(self):
         if self.level.alive and self.level.direction == -1:
-            def complete_reverse():
-                self.level.forward()
+            def complete_reverse(*args, **kwargs):
+                self.level.forward(*args, **kwargs)
                 self.player.right()
 
             self.audio.reverse(complete_reverse)
@@ -191,7 +191,6 @@ class MainWidget(BaseWidget):
         ground = self.check_block_collision_and_death()
         self.player.on_update(dt, self.level.alive, ground)
         self.level.check_checkpoint(self.player.pos[1], self.player.color_idx, self.player.y_vel)
-        self.level.on_update(dt)
         self.audio.on_update()
 
 

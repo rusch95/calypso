@@ -76,6 +76,8 @@ class MidiController(object):
         # current notes on and their velocities. Helps with reversing
         self.current_values = dict()
 
+        self.started = False
+
     def toggle(self):
         """pauses or plays the music."""
         self.paused ^= True
@@ -89,6 +91,7 @@ class MidiController(object):
             # TODO: reschedule all scheduled notes
 
     def start(self, start_callback=None):
+        self.started = True
         next_beat = quantize_tick_up(self.sched.get_tick(), BEAT_LEN)
         self.current_offset = next_beat
 
@@ -115,6 +118,8 @@ class MidiController(object):
         # so we don't keep playing scheduled notes
         self.num_reverses += 10
 
+        self.started = False
+
     # reverse music
     def reverse(self, callback=None):
         """Reverses the music at the next barline. callback will be called when that happens."""
@@ -133,8 +138,6 @@ class MidiController(object):
 
     def _reverse(self, tick, arg):
         self.reverse_pending = False
-        if self.reverse_callback is not None:
-            self.reverse_callback()
 
         self.reversed ^= True
 
@@ -167,8 +170,14 @@ class MidiController(object):
 
         self._midi_schedule_next_note(tick, self.num_reverses)
 
+        if self.reverse_callback is not None:
+            self.reverse_callback()
+
+
     def convert_tick(self, song_tick):
-        if self.reversed:
+        if not self.started:
+            return 0
+        elif self.reversed:
             return self.current_offset - song_tick
         else:
             return self.current_offset + song_tick
@@ -225,9 +234,8 @@ class MidiController(object):
 
     # needed to update audio
     def on_update(self):
-        dt = 1
         self.audio.on_update()
-        self.level_update(dt)
+        self.level_update(loc=-self.convert_tick(self.sched.get_tick()))
 
 
 if __name__ == '__main__':

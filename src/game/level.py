@@ -149,8 +149,12 @@ class Level(InstructionGroup):
     def start(self):
         self.direction = 1
 
-    def on_update(self, dt):
-        self.translator.x -= self.direction * SPEED
+    def on_update(self, loc=None):
+        if loc is not None:
+            self.translator.x = convert_tick_to_x(loc)
+            print "on_update", self.translator.x, loc
+        else:
+            self.translator.x -= self.direction * SPEED
         if self.alive:
             for block in self.moving_blocks:
                 block.on_update()
