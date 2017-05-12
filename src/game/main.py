@@ -33,11 +33,11 @@ class MainWidget(BaseWidget):
         self.canvas.add(color)
         self.canvas.add(Rectangle(pos=(0, 0), size=Window.size))
 
-        self.player = Player((PLAYER_X, PLAYER_Y))
-        self.canvas.add(self.player)
-
         self.audio = MidiController("music/grieg_mountain_king_with_levels.mid", self.level_on_update)
         self.level = Level(self.audio.platform_messages)
+        self.player = Player((PLAYER_X, PLAYER_Y), self.level)
+
+        self.canvas.add(self.player)
         self.canvas.add(self.level)
 
         Window.bind(on_joy_axis=self.on_joy_axis)

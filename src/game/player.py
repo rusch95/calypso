@@ -15,8 +15,11 @@ class TextureHolder(object):
 
 
 class Player(InstructionGroup):
-    def __init__(self, init_pos):
+    def __init__(self, init_pos, level):
         super(Player, self).__init__()
+
+        #Level Reference for Animation
+        self.level = level
 
         # Set the physics of the person
         self.init_pos = init_pos
@@ -30,7 +33,6 @@ class Player(InstructionGroup):
         # Create a Person
         self.size = (PLAYER_W, PLAYER_H)
         self.color_idx = 0
-        self.frame = 0
 
         red = Image(source='../../data/player/player_red.png').texture
         green = Image(source='../../data/player/player_green.png').texture
@@ -87,9 +89,8 @@ class Player(InstructionGroup):
         return self.pos[1] == FLOOR
 
     def next_frame(self):
-        self.frame += 1
         frames = self.cur_frames[self.color_idx]
-        new_frame = frames[self.frame / 5 % len(frames)]
+        new_frame = frames[int(self.level.translator.x) / 20 % len(frames)]
         if self.dir_right != new_frame.right:
             new_frame.right = self.dir_right
             new_frame.texture.flip_horizontal()
