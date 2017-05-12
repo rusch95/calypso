@@ -4,6 +4,7 @@ from kivy.graphics import Color, Ellipse, Rectangle, Line
 from kivy.graphics import Translate
 from kivy.uix.image import Image
 
+import globals
 from const import *
 
 

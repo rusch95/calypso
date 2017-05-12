@@ -12,6 +12,7 @@ from kivy.graphics import Translate
 from level import *
 from player import *
 from music.midi_controller import MidiController
+import globals
 from const import *
 from block import *
 
@@ -27,7 +28,9 @@ class MainWidget(BaseWidget):
         self.info = topleft_label()
         self.add_widget(self.info)
 
-        self.canvas.add(Color(.4, .4, .75))
+        color = Color(.4, .4, .75)
+        globals.CURRENT_COLORS.append((color, color.s))
+        self.canvas.add(color)
         self.canvas.add(Rectangle(pos=(0, 0), size=Window.size))
 
         self.player = Player((PLAYER_X, PLAYER_Y))
@@ -41,6 +44,7 @@ class MainWidget(BaseWidget):
         Window.bind(on_joy_button_down=self.on_joy_button_down)
         Window.bind(on_joy_hat=self.on_joy_hat)
 
+        self.desaturate = False
         self.time = 0
 
     def level_on_update(self, *args, **kwargs):
@@ -150,13 +154,19 @@ class MainWidget(BaseWidget):
         self.player.reset(y_pos, color_idx, y_vel)
         self.audio.reset(lost=False)
 
+        self.desaturate = False
+        for color, og in globals.CURRENT_COLORS:
+            color.s = og
+
     def set_color(self, color_idx):
         if self.level.alive:
             self.player.set_color(color_idx)
 
     def lose(self):
+        self.desaturate = True
         self.level.lose()
         self.audio.reset(lost=True)
+
 
     # checks for loss conditions and returns ground level if player is on ground, otherwise
     def check_block_collision_and_death(self):
@@ -193,5 +203,9 @@ class MainWidget(BaseWidget):
         self.level.check_checkpoint(self.player.pos[1], self.player.color_idx, self.player.y_vel)
         self.audio.on_update()
 
+        if self.desaturate:
+            for color, og in globals.CURRENT_COLORS:
+                if color.s > 0.0045:
+                    color.s -= .0045
 
 run(MainWidget)

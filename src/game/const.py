@@ -58,3 +58,5 @@ BAR_OFFSET = PIXEL / 2 - BAR_W
 
 # Speed of level
 SPEED = 4
+
+CURRENT_COLORS = []

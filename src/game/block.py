@@ -4,6 +4,7 @@ from kivy.graphics import Color, Ellipse, Rectangle, Line
 from kivy.graphics import Translate
 from kivy.uix.image import Image
 
+import globals
 from const import *
 
 
@@ -35,6 +36,7 @@ class Block(InstructionGroup):
 
         # Create block
         self.add(self.color)
+        globals.CURRENT_COLORS.append((self.color, self.color.s))
         self.block = Rectangle(pos=(init_pos, self.y), size=(width, height), texture=texture)
         self.add(self.block)
 

@@ -6,6 +6,7 @@ from checkpoint import *
 def convert_tick_to_x(tick, include_player_x=True):
     return tick * 4 / 15 + PLAYER_X*include_player_x
 
+CURRENT_COLORS = []
 
 class Level(InstructionGroup):
     def __init__(self, platform_messages):
