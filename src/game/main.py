@@ -47,6 +47,9 @@ class MainWidget(BaseWidget):
         self.desaturate = False
         self.time = 0
 
+        #Hack to setup correct initiall color
+        self.set_color(0)
+
     def level_on_update(self, *args, **kwargs):
         return self.level.on_update(*args, **kwargs)
 
@@ -157,11 +160,27 @@ class MainWidget(BaseWidget):
         self.desaturate = False
         for color, og in globals.CURRENT_COLORS:
             color.s = og
+        
+        self.set_color(0)
 
     def set_color(self, color_idx):
         if self.level.alive:
             self.player.set_color(color_idx)
 
+        if color_idx == 0:
+            RED.rgb = COLOR_VALS[0]
+            GREEN.rgb = DESAT_VALS[1]
+            BLUE.rgb = DESAT_VALS[2]
+        elif color_idx == 1:
+            RED.rgb = DESAT_VALS[0]
+            GREEN.rgb = COLOR_VALS[1]
+            BLUE.rgb = DESAT_VALS[2]
+        else:
+            RED.rgb = DESAT_VALS[0]
+            GREEN.rgb = DESAT_VALS[1]
+            BLUE.rgb = COLOR_VALS[2]
+
+        
     def lose(self):
         self.desaturate = True
         self.level.lose()

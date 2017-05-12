@@ -6,6 +6,8 @@ from kivy.graphics import Color
 RED = Color(1, 0, 0)
 GREEN = Color(0, 1, 0)
 BLUE = Color(0, .4, 1)
+COLOR_VALS = ((1, 0, 0), (0, 1, 0), (0, .4, 1))
+DESAT_VALS = ((1, .5, .5), (.5, 1, .5), (.5, .7, 1))
 WHITE = Color(1, 1, 1)
 GREY = Color(.5, .5, .5)
 GRAY = GREY
@@ -58,5 +60,3 @@ BAR_OFFSET = PIXEL / 2 - BAR_W
 
 # Speed of level
 SPEED = 4
-
-CURRENT_COLORS = []

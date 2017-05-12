@@ -42,5 +42,5 @@ Rusch:
 		graphics for all the level elements
 		death animation: everything turns black and white
 	DONE Add controller support
-	Death animation
-	Fade colors that aren't your own
+	DONE Death animation
+	DONE Fade colors that aren't your own

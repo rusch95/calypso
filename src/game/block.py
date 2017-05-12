@@ -37,6 +37,7 @@ class Block(InstructionGroup):
         # Create block
         self.add(self.color)
         globals.CURRENT_COLORS.append((self.color, self.color.s))
+        globals.BLOCK_COLORS.append((self.color, self.color_idx))
         self.block = Rectangle(pos=(init_pos, self.y), size=(width, height), texture=texture)
         self.add(self.block)
 

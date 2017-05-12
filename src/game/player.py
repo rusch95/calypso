@@ -50,7 +50,7 @@ class Player(InstructionGroup):
         self.cur_frames = self.normal_frames
 
         self.person = Rectangle(texture=red_frames[0].texture, pos=self.pos, size=self.size)
-        self.add(WHITE)
+        self.add(Color(1,1,1))
         self.add(self.person)
         self.dir_right = True
 
