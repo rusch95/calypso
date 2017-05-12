@@ -1,0 +1,2 @@
+CURRENT_COLORS = []
+BLOCK_COLORS = []
