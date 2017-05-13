@@ -6,14 +6,17 @@ from kivy.graphics import Color
 RED = Color(1, 0, 0)
 GREEN = Color(0, 1, 0)
 BLUE = Color(0, .4, 1)
+BACKGROUND = Color(1, .75, .75)
 COLOR_VALS = ((1, 0, 0), (0, 1, 0), (0, .4, 1))
 DESAT_VALS = ((1, .5, .5), (.5, 1, .5), (.5, .7, 1))
+BACKGROUND_VALS = ((1, .75, .75), (.75, 1, .75), (.75, .85, 1))
 WHITE = Color(1, 1, 1)
 GREY = Color(.5, .5, .5)
 GRAY = GREY
 LIGHT_PURPLE = Color(1, .75, 1)
 PURPLE = Color(.5, 0, .5)
 COLORS = [RED, GREEN, BLUE, WHITE]
+CYCLE_COLORS = [RED, GREEN, BLUE, BACKGROUND]
 COLORS_2 = [(1, 0, 0), (0, 1, 0), (0, 0, 1)]
 
 RED_IDX = 0

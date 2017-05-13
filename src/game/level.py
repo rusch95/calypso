@@ -6,8 +6,6 @@ from checkpoint import *
 def convert_tick_to_x(tick, include_player_x=True):
     return tick * 4 / 15 + PLAYER_X*include_player_x
 
-CURRENT_COLORS = []
-
 class Level(InstructionGroup):
     def __init__(self, platform_messages):
         super(Level, self).__init__()
@@ -26,9 +24,11 @@ class Level(InstructionGroup):
             self.blocks.append(start_block)
 
         where_started = {}
+        velocities = {}
         for msg in platform_messages:
             if msg.type == 'NoteOnEvent':
                 where_started[msg.pitch] = msg.tick
+                velocities[msg.pitch] = msg.velocity
             elif msg.type == 'NoteOffEvent':
                 begin = convert_tick_to_x(where_started[msg.pitch])
                 end = convert_tick_to_x(msg.tick)
@@ -48,9 +48,11 @@ class Level(InstructionGroup):
                     color_idx = msg.pitch % 6
                     color = COLORS_MIDI[color_idx]
 
+                    velocity = velocities[msg.pitch]
+                    
                     for i in xrange(block_len):
                         block = Block(init_pos=begin + i * PIXEL, y=height * PIXEL, color_idx=color,
-                                      translator=self.translator)
+                                      translator=self.translator, velocity=velocity)
                         self.blocks.append(block)
                         self.add(block)
 

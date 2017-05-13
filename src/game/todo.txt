@@ -36,11 +36,11 @@ Jakob:
 
 Rusch:
 	Add graphics
-		player graphics that keeps time
+		DONE player graphics that keeps time
 			unicycle with a tick that rotates
 			hunching every tick
 		graphics for all the level elements
-		death animation: everything turns black and white
+		DONE death animation: everything turns black and white
 	DONE Add controller support
 	DONE Death animation
 	DONE Fade colors that aren't your own

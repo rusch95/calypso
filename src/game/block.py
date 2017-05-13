@@ -4,15 +4,25 @@ from kivy.graphics import Color, Ellipse, Rectangle, Line
 from kivy.graphics import Translate
 from kivy.uix.image import Image
 
-import globals
 from const import *
 
+texture_paths = ['grayscale_girder.png', 
+                 'brick_desat.png',
+                 'brick_left_edge_normal_desat.png',
+                 'brick_left_edge_top_desat.png',
+                 'brick_top_desat.png',
+                 'brick_right_edge_top_desat.png',
+                 'brick_right_edge_normal_desat.png']
+
+#80 onwards
+textures = {i + 80: Image(source='../../data/tiles/{}'.format(texture_paths[i])) 
+            for i in xrange(len(texture_paths))}
 
 class Block(InstructionGroup):
     def __init__(self, init_pos, y, color_idx,
                  translator, width=BLOCK_W, height=BLOCK_H,
                  moving=False, miny=BLOCK_MIN, maxy=BLOCK_MAX,
-                 speed=BLOCK_SPEED, texture=None):
+                 speed=BLOCK_SPEED, texture=None, velocity=80):
         super(Block, self).__init__()
 
         # Store parameters
@@ -32,12 +42,10 @@ class Block(InstructionGroup):
             self.speed = speed
             self.up = True
 
-        texture = Image(source='../../data/tiles/grayscale_girder.png').texture
+        texture = textures[84].texture
 
         # Create block
         self.add(self.color)
-        globals.CURRENT_COLORS.append((self.color, self.color.s))
-        globals.BLOCK_COLORS.append((self.color, self.color_idx))
         self.block = Rectangle(pos=(init_pos, self.y), size=(width, height), texture=texture)
         self.add(self.block)
 

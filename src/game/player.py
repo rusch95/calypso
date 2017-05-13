@@ -90,7 +90,7 @@ class Player(InstructionGroup):
 
     def next_frame(self):
         frames = self.cur_frames[self.color_idx]
-        new_frame = frames[int(self.level.translator.x) / 20 % len(frames)]
+        new_frame = frames[int(-self.level.translator.x) / 20 % len(frames)]
         if self.dir_right != new_frame.right:
             new_frame.right = self.dir_right
             new_frame.texture.flip_horizontal()

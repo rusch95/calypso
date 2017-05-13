@@ -28,10 +28,14 @@ class MainWidget(BaseWidget):
         self.info = topleft_label()
         self.add_widget(self.info)
 
-        color = Color(.4, .4, .75)
-        globals.CURRENT_COLORS.append((color, color.s))
-        self.canvas.add(color)
-        self.canvas.add(Rectangle(pos=(0, 0), size=Window.size))
+        background = Image(source='../../data/background/city2.png').texture
+        self.background_color = BACKGROUND
+        self.canvas.add(self.background_color)
+        self.canvas.add(Rectangle(pos=(0, 0), 
+                        size=Window.size, 
+                        texture=background))
+
+        self.background_texture = None
 
         self.audio = MidiController("music/grieg_mountain_king_with_levels.mid", self.level_on_update)
         self.level = Level(self.audio.platform_messages)
@@ -158,9 +162,6 @@ class MainWidget(BaseWidget):
         self.audio.reset(lost=False)
 
         self.desaturate = False
-        for color, og in globals.CURRENT_COLORS:
-            color.s = og
-        
         self.set_color(0)
 
     def set_color(self, color_idx):
@@ -171,14 +172,16 @@ class MainWidget(BaseWidget):
             RED.rgb = COLOR_VALS[0]
             GREEN.rgb = DESAT_VALS[1]
             BLUE.rgb = DESAT_VALS[2]
+            BACKGROUND.rgb = BACKGROUND_VALS[0]
         elif color_idx == 1:
             RED.rgb = DESAT_VALS[0]
             GREEN.rgb = COLOR_VALS[1]
-            BLUE.rgb = DESAT_VALS[2]
+            BACKGROUND.rgb = BACKGROUND_VALS[1]
         else:
             RED.rgb = DESAT_VALS[0]
             GREEN.rgb = DESAT_VALS[1]
             BLUE.rgb = COLOR_VALS[2]
+            BACKGROUND.rgb = BACKGROUND_VALS[2]
 
         
     def lose(self):
@@ -223,8 +226,8 @@ class MainWidget(BaseWidget):
         self.audio.on_update()
 
         if self.desaturate:
-            for color, og in globals.CURRENT_COLORS:
-                if color.s > 0.0045:
-                    color.s -= .0045
+            for color in CYCLE_COLORS:
+                if color.s > .05:
+                    color.s -= .05
 
 run(MainWidget)
