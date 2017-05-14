@@ -31,7 +31,7 @@ class MidiController(object):
         self.platform_messages = [m for m in messages if m.channel == 1]
 
         # create TempoMap, AudioScheduler
-        self.tempo_map = SimpleTempoMap(160)
+        self.tempo_map = SimpleTempoMap(200)
         self.sched = AudioScheduler(self.tempo_map)
 
         # connect scheduler into audio system

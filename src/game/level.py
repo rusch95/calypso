@@ -60,7 +60,7 @@ class Level(InstructionGroup):
         self.add(self.checkpoint)
         self.checkpoints.append(self.checkpoint)
 
-        for i in xrange(60):
+        for i in xrange(120):
             xbar = 256 * i + PLAYER_X
             self.bar = Barline(xbar, self.translator)
             self.add(self.bar)
