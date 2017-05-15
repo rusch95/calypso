@@ -44,3 +44,5 @@ Rusch:
 	DONE Add controller support
 	DONE Death animation
 	DONE Fade colors that aren't your own
+	Fix stretching of frog dude
+	Maybe increase size of background?

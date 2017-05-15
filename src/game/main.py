@@ -140,6 +140,8 @@ class MainWidget(BaseWidget):
 
     def left(self):
         if self.level.alive and self.level.direction == 1:
+            self.level.set_next_barline()
+            
             def complete_reverse(*args, **kwargs):
                 self.level.reverse(*args, **kwargs)
                 self.player.left()
@@ -148,6 +150,8 @@ class MainWidget(BaseWidget):
 
     def right(self):
         if self.level.alive and self.level.direction == -1:
+            self.level.set_previous_barline()
+
             def complete_reverse(*args, **kwargs):
                 self.level.forward(*args, **kwargs)
                 self.player.right()

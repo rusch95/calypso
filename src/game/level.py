@@ -18,6 +18,8 @@ class Level(InstructionGroup):
         self.checkpoints = []
         self.blocks = []
 
+        self.barlines = []
+
         for i in xrange(0, PLAYER_X + 1, PIXEL):
             start_block = Block(init_pos=i, y=PIXEL, color_idx=RED_IDX, translator=self.translator)
             self.add(start_block)
@@ -64,6 +66,7 @@ class Level(InstructionGroup):
             xbar = 256 * i + PLAYER_X
             self.bar = Barline(xbar, self.translator)
             self.add(self.bar)
+            self.barlines.append(self.bar)
 
         self.moving_blocks = []
         moving_block = Block(17 * PIXEL, 4 * PIXEL, WHITE_IDX, self.translator, moving=True)
@@ -106,13 +109,28 @@ class Level(InstructionGroup):
     def reverse(self):
         if self.alive:
             self.direction = -1
+            if self.reverse_line:
+                self.reverse_line.un_highlight()
 
-    # def set_next_barline(self):
-    #     if self.reverse_line:
+    def set_next_barline(self):
+        if self.reverse_line:
+            self.reverse_line.un_highlight()
+        idx = int(-self.translator.x/256)+1
+        self.reverse_line = self.barlines[idx]
+        self.reverse_line.highlight()
 
     def forward(self):
         if self.alive:
             self.direction = 1
+            if self.reverse_line:
+                self.reverse_line.un_highlight()
+
+    def set_previous_barline(self):
+        if self.reverse_line:
+            self.reverse_line.un_highlight()
+        idx = int(-self.translator.x/256)
+        self.reverse_line = self.barlines[idx]
+        self.reverse_line.highlight()
 
     def lose(self):
         self.direction = 0
@@ -122,6 +140,8 @@ class Level(InstructionGroup):
         self.translator.x = self.checkpoint_pos
         self.direction = 0
         self.alive = True
+        if self.reverse_line:
+            self.reverse_line.un_highlight()
         return self.checkpoint_y, self.checkpoint_color, self.checkpoint_y_vel
 
     def start(self):
