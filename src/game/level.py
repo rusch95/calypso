@@ -79,6 +79,9 @@ class Level(InstructionGroup):
         self.checkpoint_y_vel = 0
         self.checkpoint = self.checkpoints[0]
 
+        # barline that is highlighted for reversal
+        self.reverse_line = None
+
     def get_current_blocks(self):
         current_blocks = []
         for b in self.blocks:
@@ -103,6 +106,9 @@ class Level(InstructionGroup):
     def reverse(self):
         if self.alive:
             self.direction = -1
+
+    # def set_next_barline(self):
+    #     if self.reverse_line:
 
     def forward(self):
         if self.alive:
