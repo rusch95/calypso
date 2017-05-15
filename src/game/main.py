@@ -178,12 +178,12 @@ class MainWidget(BaseWidget):
 
     def reset(self):
         self.player.un_duck()
-        y_pos, color_idx, y_vel = self.level.reset()
+        y_pos, color_idx, y_vel, x_pos = self.level.reset()
         self.player.reset(y_pos, color_idx, y_vel)
-        self.audio.reset(lost=False)
+        self.audio.reset(lost=False, tick=x_pos)
 
         self.desaturate = False
-        self.set_color(0)
+        self.set_color(color_idx)
 
     def set_color(self, color_idx):
         if self.level.alive:
