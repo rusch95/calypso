@@ -115,7 +115,7 @@ class Level(InstructionGroup):
     def set_next_barline(self):
         if self.reverse_line:
             self.reverse_line.un_highlight()
-        idx = int(-self.translator.x/256)+1
+        idx = int(-self.translator.x/512)+1
         self.reverse_line = self.barlines[idx]
         self.reverse_line.highlight()
 
@@ -128,7 +128,7 @@ class Level(InstructionGroup):
     def set_previous_barline(self):
         if self.reverse_line:
             self.reverse_line.un_highlight()
-        idx = int(-self.translator.x/256)
+        idx = int(-self.translator.x/512)
         self.reverse_line = self.barlines[idx]
         self.reverse_line.highlight()
 
