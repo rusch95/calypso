@@ -25,5 +25,17 @@ class Barline(InstructionGroup):
     def get_current_pos(self):
         return self.init_pos + self.translator.x
 
+    def highlight(self):
+        self.remove(self.block)
+        self.block = Rectangle(pos=(self.x-22, 0), size=(BAR_W, BAR_H))
+        self.add(WHITE)
+        self.add(self.block)
+        self.add(self.color)
+
+    def un_highlight(self):
+        self.remove(self.block)
+        self.block = Rectangle(pos=(self.x-22, 0), size=(BAR_W, BAR_H))
+        self.add(self.block)
+
     def on_update(self):
         pass

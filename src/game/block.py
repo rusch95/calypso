@@ -68,7 +68,7 @@ class Block(InstructionGroup):
 
     def on_ground(self, player):
         ground = self.y + self.height
-        if abs(player.pos[1] - ground+18) < 27 and player.color_idx == self.color_idx:
+        if abs(player.pos[1] - ground+18) < 27 and (player.color_idx == self.color_idx or self.color_idx == WHITE_IDX):
             return ground
         return 0
 
