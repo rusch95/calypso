@@ -13,7 +13,7 @@ from common.synth import *
 from common.wavegen import *
 from common.wavesrc import *
 
-BEAT_LEN = 160 * 6
+BEAT_LEN = 160 * 6 * 2
 
 
 class MidiController(object):
