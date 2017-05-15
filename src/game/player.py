@@ -84,6 +84,7 @@ class Player(InstructionGroup):
         self.pos = (self.init_pos[0], y_pos)
         self.y_vel = y_vel
         self.color_idx = color_idx
+        print "player color idx:", color_idx
 
     def on_ground(self):
         return self.pos[1] == FLOOR

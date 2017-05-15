@@ -6,6 +6,10 @@ from checkpoint import *
 def convert_tick_to_x(tick, include_player_x=True):
     return tick * 4 / 15 + PLAYER_X*include_player_x
 
+def convert_x_to_tick(x, include_player_x=False):
+    return (x-PLAYER_X*include_player_x) * 15 / 4
+
+
 class Level(InstructionGroup):
     def __init__(self, platform_messages):
         super(Level, self).__init__()
@@ -37,7 +41,7 @@ class Level(InstructionGroup):
                 end = convert_tick_to_x(msg.tick)
 
                 CHECKPOINT_PITCH = 0
-                COLORS_MIDI = [None, RED_IDX, GREEN_IDX, BLUE_IDX, WHITE_IDX, None]
+                COLORS_MIDI = [WHITE_IDX, RED_IDX, GREEN_IDX, BLUE_IDX, WHITE_IDX, WHITE_IDX]
 
                 if msg.pitch == CHECKPOINT_PITCH:
                     cp = CheckPoint(end, self.translator)
@@ -59,9 +63,11 @@ class Level(InstructionGroup):
                         self.blocks.append(block)
                         self.add(block)
 
-        self.checkpoint = CheckPoint(0, self.translator)
-        self.add(self.checkpoint)
-        self.checkpoints.append(self.checkpoint)
+        check_nums = xrange(0,512,32)
+        for cn in check_nums:
+            checkpoint = CheckPoint(cn*PIXEL + PLAYER_X - 512, self.translator)
+            self.add(checkpoint)
+            self.checkpoints.append(checkpoint)
 
         for i in xrange(120):
             xbar = 512 * i + PLAYER_X
@@ -98,6 +104,7 @@ class Level(InstructionGroup):
         for c in self.checkpoints:
             c_pos = c.get_current_pos()
             if c_pos + BAR_W >= PLAYER_X and c_pos <= PLAYER_X + PLAYER_W and c != self.checkpoint:
+                print "checkpoint ready"
                 self.checkpoint_pos = self.translator.x
                 self.checkpoint_y = player_y
                 self.checkpoint_color = color_idx
@@ -143,7 +150,7 @@ class Level(InstructionGroup):
         self.alive = True
         if self.reverse_line:
             self.reverse_line.un_highlight()
-        return self.checkpoint_y, self.checkpoint_color, self.checkpoint_y_vel
+        return self.checkpoint_y, self.checkpoint_color, self.checkpoint_y_vel, convert_x_to_tick(self.checkpoint_pos)
 
     def start(self):
         self.direction = 1

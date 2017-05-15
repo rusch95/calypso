@@ -79,7 +79,7 @@ class MidiController(object):
         self.started = False
         self.lose_tick = None
         
-        self.start_spot = start_spot
+        self.start_spot = start_spot*2*BEAT_LEN
 
     def toggle(self):
         """pauses or plays the music."""
@@ -95,7 +95,7 @@ class MidiController(object):
 
     def start(self, start_callback=None):
         next_beat = quantize_tick_up(self.sched.get_tick(), BEAT_LEN)
-        self.current_offset = next_beat - self.start_spot*2*BEAT_LEN
+        self.current_offset = next_beat - self.start_spot
         print self.start_spot, self.current_offset
 
         self.schedule_cmd = self.sched.post_at_tick(next_beat, self._midi_schedule_next_note, self.num_reverses)
@@ -104,7 +104,7 @@ class MidiController(object):
             if start_callback is not None:
                 start_callback()
 
-    def reset(self, lost=False):
+    def reset(self, lost=False, tick=None):
         if self.schedule_cmd:
             self.sched.remove(self.schedule_cmd)
 
@@ -116,16 +116,28 @@ class MidiController(object):
         self.playing_notes.clear()
 
         self.reversed = False
-        self.current_idx = 0
 
         # so we don't keep playing scheduled notes
         self.num_reverses += 10
 
         if not lost:
             self.started = False
-            self.lose_tick = None
+            self.lose_tick = -tick
+            
+            self.current_idx = 0
+            if tick is None:
+                return
+            self.start_spot = -tick
+            
+            while self.mid_messages[self.current_idx].tick <= tick:
+                self.current_idx += 1
+            
         else:
             self.lose_tick = self.convert_tick(self.sched.get_tick())
+            
+            
+            self.current_idx = 0
+            
 
     # reverse music
     def reverse(self, callback=None):
@@ -188,10 +200,10 @@ class MidiController(object):
             return self.current_offset + song_tick
 
     def convert_tick_for_level(self, song_tick):
-        if not self.started:
-            return 0
-        elif self.lose_tick is not None:
+        if self.lose_tick is not None:
             return self.lose_tick
+        elif not self.started:
+            return 0
         elif self.reversed:
             return self.current_offset - song_tick
         else:
@@ -203,6 +215,7 @@ class MidiController(object):
             return
 
         self.started = True
+        self.lose_tick = None
 
         if self.reversed:
             to_schedule = self.mid_messages[self.current_idx]
