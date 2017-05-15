@@ -28,9 +28,13 @@ class MainWidget(BaseWidget):
 
         import sys
         try:
-            start_spot = int(sys.argv[2])
+            start_spot = int(sys.argv[1])
         except:
             start_spot = 0
+        if start_spot != 0:
+            player_start_mult = 2
+        else:
+            player_start_mult = 1
 
         self.info = topleft_label()
         self.add_widget(self.info)
@@ -46,7 +50,7 @@ class MainWidget(BaseWidget):
 
         self.audio = MidiController("music/grieg_mountain_king_with_levels.mid", self.level_on_update, start_spot=start_spot)
         self.level = Level(self.audio.platform_messages)
-        self.player = Player((PLAYER_X, PLAYER_Y), self.level)
+        self.player = Player((PLAYER_X+1024*start_spot, PLAYER_Y*player_start_mult), self.level)
         
         self.canvas.add(self.level)
 

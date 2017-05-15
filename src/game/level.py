@@ -11,6 +11,7 @@ class Level(InstructionGroup):
         super(Level, self).__init__()
 
         self.translator = Translate()
+
         self.add(self.translator)
         self.checkpoints = []
         self.blocks = []
