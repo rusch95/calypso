@@ -75,6 +75,7 @@ class MainWidget(BaseWidget):
         return self.level.on_update(*args, **kwargs)
 
     def on_key_down(self, keycode, modifiers):
+
         if keycode[1] == 'up':
             self.up()
 
@@ -115,6 +116,7 @@ class MainWidget(BaseWidget):
             self.set_color(color)
 
     def on_joy_axis(self, win, stickid, axisid, value):
+
         if axisid == X_AXIS and value < -JOYSTICK_THRESH:
             self.left()
         if axisid == X_AXIS and value > JOYSTICK_THRESH:

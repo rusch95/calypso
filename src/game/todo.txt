@@ -22,7 +22,7 @@ Lotta:
 		DONE graphics
 		DONE logic
 	DONE Change standard sizes to 64
-	Highlight next barline when reversing
+	DONE Highlight next barline when reversing
 	
 Jakob:
 	PUNT change tone based on color
