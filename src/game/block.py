@@ -42,7 +42,7 @@ class Block(InstructionGroup):
             self.speed = speed
             self.up = True
 
-        texture = textures[84].texture
+        texture = textures[velocity].texture
 
         # Create block
         self.add(self.color)
