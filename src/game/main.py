@@ -40,9 +40,13 @@ class MainWidget(BaseWidget):
         self.audio = MidiController("music/grieg_mountain_king_with_levels.mid", self.level_on_update)
         self.level = Level(self.audio.platform_messages)
         self.player = Player((PLAYER_X, PLAYER_Y), self.level)
-
-        self.canvas.add(self.player)
+        
         self.canvas.add(self.level)
+
+        # create reverse translator to have player in the right place
+        self.reverse_translator = Translate()
+        self.canvas.add(self.reverse_translator)
+        self.canvas.add(self.player)
 
         Window.bind(on_joy_axis=self.on_joy_axis)
         Window.bind(on_joy_button_down=self.on_joy_button_down)
@@ -229,5 +233,8 @@ class MainWidget(BaseWidget):
             for color in CYCLE_COLORS:
                 if color.s > .05:
                     color.s -= .05
+
+        # update reverse translator
+        self.reverse_translator.x = -self.level.translator.x
 
 run(MainWidget)
