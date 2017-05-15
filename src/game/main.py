@@ -25,6 +25,13 @@ class MainWidget(BaseWidget):
     def __init__(self):
         super(MainWidget, self).__init__()
 
+
+        import sys
+        try:
+            start_spot = int(sys.argv[2])
+        except:
+            start_spot = 0
+
         self.info = topleft_label()
         self.add_widget(self.info)
 
@@ -37,7 +44,7 @@ class MainWidget(BaseWidget):
 
         self.background_texture = None
 
-        self.audio = MidiController("music/grieg_mountain_king_with_levels.mid", self.level_on_update)
+        self.audio = MidiController("music/grieg_mountain_king_with_levels.mid", self.level_on_update, start_spot=start_spot)
         self.level = Level(self.audio.platform_messages)
         self.player = Player((PLAYER_X, PLAYER_Y), self.level)
         
@@ -57,6 +64,8 @@ class MainWidget(BaseWidget):
 
         #Hack to setup correct initiall color
         self.set_color(0)
+        
+
 
     def level_on_update(self, *args, **kwargs):
         return self.level.on_update(*args, **kwargs)

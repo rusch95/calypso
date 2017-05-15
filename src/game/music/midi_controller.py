@@ -17,7 +17,7 @@ BEAT_LEN = 160 * 6 * 2
 
 
 class MidiController(object):
-    def __init__(self, song_path, level_update):
+    def __init__(self, song_path, level_update, start_spot=0):
         super(MidiController, self).__init__()
         self.audio = Audio(2)
         self.mixer = Mixer()
@@ -78,6 +78,8 @@ class MidiController(object):
 
         self.started = False
         self.lose_tick = None
+        
+        self.start_spot = start_spot
 
     def toggle(self):
         """pauses or plays the music."""
@@ -93,7 +95,8 @@ class MidiController(object):
 
     def start(self, start_callback=None):
         next_beat = quantize_tick_up(self.sched.get_tick(), BEAT_LEN)
-        self.current_offset = next_beat
+        self.current_offset = next_beat - self.start_spot*2*BEAT_LEN
+        print self.start_spot, self.current_offset
 
         self.schedule_cmd = self.sched.post_at_tick(next_beat, self._midi_schedule_next_note, self.num_reverses)
 
